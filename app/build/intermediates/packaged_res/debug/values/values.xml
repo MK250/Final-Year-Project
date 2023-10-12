@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <string name="app_name">SugarSync</string>
+    <string name="gcm_defaultSenderId" translatable="false">772436347778</string>
+    <string name="google_api_key" translatable="false">AIzaSyD44iZ0j-NHNNErFaWJ3_1NagRTkGN2L6E</string>
+    <string name="google_app_id" translatable="false">1:772436347778:android:dbd99ee53c979bc88e1d9b</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyD44iZ0j-NHNNErFaWJ3_1NagRTkGN2L6E</string>
+    <string name="google_storage_bucket" translatable="false">sugarsync-16f81.appspot.com</string>
+    <string name="project_id" translatable="false">sugarsync-16f81</string>
+    <string name="text_hint1">Enter a username</string>
+    <string name="text_hint2">Enter a password</string>
+    <style name="Base.Theme.SugarSync" parent="Theme.Material3.DayNight">
+        
+        
+    </style>
+    <style name="Theme.SugarSync" parent="Base.Theme.SugarSync"/>
+</resources>

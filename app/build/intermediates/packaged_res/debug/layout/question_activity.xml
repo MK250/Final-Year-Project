@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/questionText1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1. What type of diabetes do you have?"
+        android:textSize="18sp" />
+
+    <RadioGroup
+        android:id="@+id/optionsRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/option1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Type 1" />
+
+        <RadioButton
+            android:id="@+id/option2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Type 2" />
+
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/questionText2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="2. What is your insulin therapy?"
+        android:textSize="18sp" />
+
+    <RadioGroup
+        android:id="@+id/optionsRadioGroup2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/option3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pen / Syringes" />
+
+        <RadioButton
+            android:id="@+id/option4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pump" />
+
+        <RadioButton
+            android:id="@+id/option5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No insulin" />
+
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/questionText3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="3. Do you take pills?"
+        android:textSize="18sp" />
+
+    <RadioGroup
+        android:id="@+id/optionsRadioGroup3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/option6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Yes" />
+
+        <RadioButton
+            android:id="@+id/option7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No" />
+
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/questionText4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="4. What units do you use for blood sugar?"
+        android:textSize="18sp" />
+
+    <RadioGroup
+        android:id="@+id/optionsRadioGroup4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/option8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="mg/dL" />
+
+        <RadioButton
+            android:id="@+id/option9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="mmol/L" />
+
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/questionText5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="5. What are your target ranges?"
+        android:textSize="18sp" />
+
+    <RadioGroup
+        android:id="@+id/optionsRadioGroup5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/option10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hyper: 180 mg/DL" />
+
+        <RadioButton
+            android:id="@+id/option11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Target range: 90 - 60 mg/DL" />
+
+        <RadioButton
+            android:id="@+id/option12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hype: 70 mg/DL" />
+
+
+    </RadioGroup>
+
+
+    <Button
+        android:id="@+id/submitBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit" />
+
+
+</LinearLayout>
+</ScrollView>
