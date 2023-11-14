@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- fragment_glucose.xml -->
+
+<!-- fragment_glucose.xml -->
+
+<!-- fragment_glucose.xml -->
+<!-- fragment_glucose.xml -->
+<!-- fragment_glucose.xml -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/previewView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/capturedImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/bCapture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Capture" />
+
+    <TextView
+        android:id="@+id/extractedTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:text=""
+        android:textSize="18sp" />
+</FrameLayout>
+
+
+

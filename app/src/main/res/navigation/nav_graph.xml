@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/homeActivity">
+    <activity
+        android:id="@+id/homeActivity"
+        android:name="com.example.sugarsync.Home_Activity"
+        android:label="Home Activity" />
+    <activity
+        android:id="@+id/glucoseActivity"
+        android:name="com.example.sugarsync.Glucose_Activity"
+        android:label="Glucose Activity" />
+    <!-- Define activities for Diet, Exercise, and Profile similarly -->
+</navigation>

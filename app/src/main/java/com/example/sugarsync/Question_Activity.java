@@ -27,8 +27,17 @@ public class Question_Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.question_activity);
 
+        fAuth = FirebaseAuth.getInstance();
+
+
         mUser = fAuth.getCurrentUser();
-        String userID= mUser.getUid();
+
+        if (mUser == null) {
+
+            Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show();
+        } else {
+            String userID = mUser.getUid();
+        }
 
         Button submitBtn = findViewById(R.id.submitBtn); // Replace with your button's ID
         submitBtn.setOnClickListener(new View.OnClickListener() {
