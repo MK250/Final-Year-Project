@@ -6,7 +6,12 @@ drawable ic_launcher_background
 drawable ic_launcher_foreground
 id bCapture
 id bottom_navigation
+id btnLogOff
+id buttonSubmit
 id capturedImageView
+id editTextBreakfast
+id editTextDinner
+id editTextLunch
 id extractedTextView
 id fragment_container
 id glucoseActivity

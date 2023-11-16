@@ -1,5 +1,6 @@
 package com.example.sugarsync;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,7 +60,23 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        // Find the "Log Off" button
+        Button logOffButton = view.findViewById(R.id.btnLogOff);
+
+        // Set click listener for the button
+        logOffButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Handle logout logic here
+                // For example, you can start a LoginActivity to log the user out
+                Intent intent = new Intent(getActivity(), Login_Activity.class);
+                startActivity(intent);
+                getActivity().finish(); // Optional: Close the current activity if needed
+            }
+        });
+
+        return view;
     }
 }

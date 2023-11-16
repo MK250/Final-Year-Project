@@ -1,0 +1,55 @@
+com.example.sugarsync.app-camera-core-1.1.0-0 /Users/sanjivkumar/.gradle/caches/transforms-3/09c2474bb8a26b3a98dee4f8363e4b74/transformed/camera-core-1.1.0/res
+com.example.sugarsync.app-fragment-1.6.2-1 /Users/sanjivkumar/.gradle/caches/transforms-3/127292fa0188ef8860a239bc0ec9f406/transformed/fragment-1.6.2/res
+com.example.sugarsync.app-lifecycle-runtime-ktx-2.6.2-2 /Users/sanjivkumar/.gradle/caches/transforms-3/17952ae365413e787d168f180d837fb5/transformed/lifecycle-runtime-ktx-2.6.2/res
+com.example.sugarsync.app-lifecycle-viewmodel-ktx-2.6.2-3 /Users/sanjivkumar/.gradle/caches/transforms-3/1a2e314e68955236478a4bedcd885be0/transformed/lifecycle-viewmodel-ktx-2.6.2/res
+com.example.sugarsync.app-activity-1.7.2-4 /Users/sanjivkumar/.gradle/caches/transforms-3/1b60c36b832f00dfcb22ee77807d0a6e/transformed/activity-1.7.2/res
+com.example.sugarsync.app-camera-view-1.1.0-5 /Users/sanjivkumar/.gradle/caches/transforms-3/1c8135217b895b943791bf4ae7308928/transformed/camera-view-1.1.0/res
+com.example.sugarsync.app-camera-lifecycle-1.1.0-6 /Users/sanjivkumar/.gradle/caches/transforms-3/1d44a82b36a706a92799ca1e9597d394/transformed/camera-lifecycle-1.1.0/res
+com.example.sugarsync.app-drawerlayout-1.1.1-7 /Users/sanjivkumar/.gradle/caches/transforms-3/1ece04c10ef16be1dd8718a86089949e/transformed/drawerlayout-1.1.1/res
+com.example.sugarsync.app-lifecycle-viewmodel-2.6.2-8 /Users/sanjivkumar/.gradle/caches/transforms-3/365ad8cbfba138e3b14ae8f781963834/transformed/lifecycle-viewmodel-2.6.2/res
+com.example.sugarsync.app-coordinatorlayout-1.1.0-9 /Users/sanjivkumar/.gradle/caches/transforms-3/38d95bbd76e210d69a2063c7df92a5ef/transformed/coordinatorlayout-1.1.0/res
+com.example.sugarsync.app-navigation-ui-2.7.5-10 /Users/sanjivkumar/.gradle/caches/transforms-3/4053c1f0e58f9cf26ff8e92996ff79df/transformed/navigation-ui-2.7.5/res
+com.example.sugarsync.app-lifecycle-process-2.6.2-11 /Users/sanjivkumar/.gradle/caches/transforms-3/44eaacd3b00abaee323841babe576dbb/transformed/lifecycle-process-2.6.2/res
+com.example.sugarsync.app-core-1.9.0-12 /Users/sanjivkumar/.gradle/caches/transforms-3/45dba061abe1e5d647d9f295032bd2d4/transformed/core-1.9.0/res
+com.example.sugarsync.app-navigation-common-2.7.5-13 /Users/sanjivkumar/.gradle/caches/transforms-3/4fa7387265049e01dc46477901db8bd7/transformed/navigation-common-2.7.5/res
+com.example.sugarsync.app-cardview-1.0.0-14 /Users/sanjivkumar/.gradle/caches/transforms-3/50786544954b7496b0a92ded292da342/transformed/cardview-1.0.0/res
+com.example.sugarsync.app-savedstate-1.2.1-15 /Users/sanjivkumar/.gradle/caches/transforms-3/5f7ea3158c30faf0c41af083136316b1/transformed/savedstate-1.2.1/res
+com.example.sugarsync.app-firebase-common-20.3.3-16 /Users/sanjivkumar/.gradle/caches/transforms-3/63a818a948bbbd2609a413376cd0b9b5/transformed/firebase-common-20.3.3/res
+com.example.sugarsync.app-lifecycle-livedata-core-ktx-2.6.2-17 /Users/sanjivkumar/.gradle/caches/transforms-3/66d908f28f378bd9c8e2421ebb37e880/transformed/lifecycle-livedata-core-ktx-2.6.2/res
+com.example.sugarsync.app-core-ktx-1.9.0-18 /Users/sanjivkumar/.gradle/caches/transforms-3/6a342e5e47c9d3bf4c63699f4a7a9ef7/transformed/core-ktx-1.9.0/res
+com.example.sugarsync.app-material-1.9.0-19 /Users/sanjivkumar/.gradle/caches/transforms-3/6b5fc5fbfb5e3e882018519a3908b9a9/transformed/material-1.9.0/res
+com.example.sugarsync.app-fragment-ktx-1.6.2-20 /Users/sanjivkumar/.gradle/caches/transforms-3/6fbe1899b16bd2142031f36f7ac68403/transformed/fragment-ktx-1.6.2/res
+com.example.sugarsync.app-viewpager2-1.0.0-21 /Users/sanjivkumar/.gradle/caches/transforms-3/6ff2bbe3027cc3763276705eea50cf36/transformed/viewpager2-1.0.0/res
+com.example.sugarsync.app-startup-runtime-1.1.1-22 /Users/sanjivkumar/.gradle/caches/transforms-3/726546bace9bbe385c0d8cd4ec26ef9b/transformed/startup-runtime-1.1.1/res
+com.example.sugarsync.app-savedstate-ktx-1.2.1-23 /Users/sanjivkumar/.gradle/caches/transforms-3/7ce6b979b40265dd087eaf1f898a538c/transformed/savedstate-ktx-1.2.1/res
+com.example.sugarsync.app-annotation-experimental-1.3.0-24 /Users/sanjivkumar/.gradle/caches/transforms-3/817a250b4cb62a6b2705197541445128/transformed/annotation-experimental-1.3.0/res
+com.example.sugarsync.app-emoji2-views-helper-1.2.0-25 /Users/sanjivkumar/.gradle/caches/transforms-3/82696d9bf3ca8b7115ec04c3ff0bbc05/transformed/emoji2-views-helper-1.2.0/res
+com.example.sugarsync.app-transition-1.4.1-26 /Users/sanjivkumar/.gradle/caches/transforms-3/83ff53727b95e9c760d22267d0c7cc80/transformed/transition-1.4.1/res
+com.example.sugarsync.app-navigation-fragment-2.7.5-27 /Users/sanjivkumar/.gradle/caches/transforms-3/889133aa88d10d6d8ed143759fe186fc/transformed/navigation-fragment-2.7.5/res
+com.example.sugarsync.app-camera-camera2-1.1.0-28 /Users/sanjivkumar/.gradle/caches/transforms-3/88b62650d829dbeeb74d1a1353ce37b4/transformed/camera-camera2-1.1.0/res
+com.example.sugarsync.app-activity-ktx-1.7.2-29 /Users/sanjivkumar/.gradle/caches/transforms-3/90f65d5cee0b95e3f9e3b5a3333d9381/transformed/activity-ktx-1.7.2/res
+com.example.sugarsync.app-browser-1.4.0-30 /Users/sanjivkumar/.gradle/caches/transforms-3/9836dcc44fd29f0989c3e04bfcabcee2/transformed/browser-1.4.0/res
+com.example.sugarsync.app-window-1.0.0-31 /Users/sanjivkumar/.gradle/caches/transforms-3/a255db3cb410e7e6ea3f235ee82bea29/transformed/window-1.0.0/res
+com.example.sugarsync.app-recyclerview-1.1.0-32 /Users/sanjivkumar/.gradle/caches/transforms-3/a2d9b89bbe85c344a44871c27394f1d4/transformed/recyclerview-1.1.0/res
+com.example.sugarsync.app-appcompat-resources-1.6.1-33 /Users/sanjivkumar/.gradle/caches/transforms-3/aa077958169644c5612c6abffae10edf/transformed/appcompat-resources-1.6.1/res
+com.example.sugarsync.app-constraintlayout-2.1.4-34 /Users/sanjivkumar/.gradle/caches/transforms-3/afb5814eccbd68069e5bd6389ce2ce7a/transformed/constraintlayout-2.1.4/res
+com.example.sugarsync.app-slidingpanelayout-1.2.0-35 /Users/sanjivkumar/.gradle/caches/transforms-3/b36bd26641bf407720239c9ce40b6cf7/transformed/slidingpanelayout-1.2.0/res
+com.example.sugarsync.app-lifecycle-runtime-2.6.2-36 /Users/sanjivkumar/.gradle/caches/transforms-3/c5dc823447c607cbb866c19288980b19/transformed/lifecycle-runtime-2.6.2/res
+com.example.sugarsync.app-emoji2-1.2.0-37 /Users/sanjivkumar/.gradle/caches/transforms-3/cda509cc96bd5991df7deaeed19a12fa/transformed/emoji2-1.2.0/res
+com.example.sugarsync.app-lifecycle-livedata-2.6.2-38 /Users/sanjivkumar/.gradle/caches/transforms-3/ced92ef8d872716f3a6efcc451903c4a/transformed/lifecycle-livedata-2.6.2/res
+com.example.sugarsync.app-core-runtime-2.2.0-39 /Users/sanjivkumar/.gradle/caches/transforms-3/d2f71b84dae5a4da7dfe372a44b978f4/transformed/core-runtime-2.2.0/res
+com.example.sugarsync.app-lifecycle-viewmodel-savedstate-2.6.2-40 /Users/sanjivkumar/.gradle/caches/transforms-3/dca516c7d060da603a6d3029318ade0c/transformed/lifecycle-viewmodel-savedstate-2.6.2/res
+com.example.sugarsync.app-navigation-runtime-2.7.5-41 /Users/sanjivkumar/.gradle/caches/transforms-3/e3f7671af03d77d79826237a03012f58/transformed/navigation-runtime-2.7.5/res
+com.example.sugarsync.app-play-services-basement-18.1.0-42 /Users/sanjivkumar/.gradle/caches/transforms-3/e69ddfd2048d62e013e1c084a9c6ef14/transformed/play-services-basement-18.1.0/res
+com.example.sugarsync.app-lifecycle-livedata-core-2.6.2-43 /Users/sanjivkumar/.gradle/caches/transforms-3/e8e4d8ad58f6cace64ca44a9b0d85b13/transformed/lifecycle-livedata-core-2.6.2/res
+com.example.sugarsync.app-play-services-base-18.1.0-44 /Users/sanjivkumar/.gradle/caches/transforms-3/ea1d2155169063a3e7b8f244bebaf5b6/transformed/play-services-base-18.1.0/res
+com.example.sugarsync.app-profileinstaller-1.3.0-45 /Users/sanjivkumar/.gradle/caches/transforms-3/fb2914d012e4cbd36bc7d41b8a4dd615/transformed/profileinstaller-1.3.0/res
+com.example.sugarsync.app-appcompat-1.6.1-46 /Users/sanjivkumar/.gradle/caches/transforms-3/ff92050ab482929c4d0f044d21af76fb/transformed/appcompat-1.6.1/res
+com.example.sugarsync.app-pngs-47 /Users/sanjivkumar/Library/CloudStorage/OneDrive-TechnologicalUniversityDublin/SugarSync  copy 2/app/build/generated/res/pngs/debug
+com.example.sugarsync.app-res-48 /Users/sanjivkumar/Library/CloudStorage/OneDrive-TechnologicalUniversityDublin/SugarSync  copy 2/app/build/generated/res/processDebugGoogleServices
+com.example.sugarsync.app-resValues-49 /Users/sanjivkumar/Library/CloudStorage/OneDrive-TechnologicalUniversityDublin/SugarSync  copy 2/app/build/generated/res/resValues/debug
+com.example.sugarsync.app-packageDebugResources-50 /Users/sanjivkumar/Library/CloudStorage/OneDrive-TechnologicalUniversityDublin/SugarSync  copy 2/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir
+com.example.sugarsync.app-packageDebugResources-51 /Users/sanjivkumar/Library/CloudStorage/OneDrive-TechnologicalUniversityDublin/SugarSync  copy 2/app/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
+com.example.sugarsync.app-merged_res-52 /Users/sanjivkumar/Library/CloudStorage/OneDrive-TechnologicalUniversityDublin/SugarSync  copy 2/app/build/intermediates/merged_res/debug
+com.example.sugarsync.app-debug-53 /Users/sanjivkumar/Library/CloudStorage/OneDrive-TechnologicalUniversityDublin/SugarSync  copy 2/app/src/debug/res
+com.example.sugarsync.app-main-54 /Users/sanjivkumar/Library/CloudStorage/OneDrive-TechnologicalUniversityDublin/SugarSync  copy 2/app/src/main/res

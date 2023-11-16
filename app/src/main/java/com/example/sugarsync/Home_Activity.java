@@ -48,8 +48,9 @@ public class Home_Activity extends AppCompatActivity  {
             Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 
             if (item.getItemId() == R.id.navigation_home && !(currentFragment instanceof HomeFragment)) {
-                // Handle the Home item directly within Home_Activity (without starting a new activity)
-                // Update or replace the existing content as needed
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new HomeFragment())
+                        .commit();
             } else if (item.getItemId() == R.id.navigation_glucose && !(currentFragment instanceof GlucoseFragment)) {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new GlucoseFragment())
