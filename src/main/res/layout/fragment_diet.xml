@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Dietary Needs Title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Dietary Needs"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Breakfast Input -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Breakfast" />
+
+    <EditText
+        android:id="@+id/editTextBreakfast"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter breakfast" />
+
+    <!-- Space -->
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="16dp" />
+
+    <!-- Lunch Input -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Lunch" />
+
+    <EditText
+        android:id="@+id/editTextLunch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter lunch" />
+
+    <!-- Space -->
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="16dp" />
+
+    <!-- Dinner Input -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dinner" />
+
+    <EditText
+        android:id="@+id/editTextDinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter dinner" />
+
+    <!-- Submit Button -->
+    <Button
+        android:id="@+id/buttonSubmit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/btnGetNutritionalInfo"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Get Nutritional Info"
+    android:layout_marginTop="16dp" />
+
+</LinearLayout>
+
