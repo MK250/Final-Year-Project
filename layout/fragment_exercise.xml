@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Exercise"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Exercise Type -->
+    <TextView
+        android:id="@+id/textViewExerciseType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Exercise Type"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/editTextExerciseType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter exercise type"
+        android:inputType="text"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Exercise Time -->
+    <TextView
+        android:id="@+id/textViewExerciseTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Exercise Time"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/editTextExerciseTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter exercise time"
+        android:inputType="numberDecimal"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/buttonSubmit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:layout_gravity="center" />
+
+    <LinearLayout
+        android:id="@+id/youtube_player_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- YouTube Player View will be added dynamically -->
+
+    </LinearLayout>
+
+</LinearLayout>
+
+

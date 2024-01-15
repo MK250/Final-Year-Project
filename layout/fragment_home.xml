@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomeFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Title at the top -->
+        <TextView
+            android:id="@+id/welcomeMessageTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="16dp"
+            android:text="Welcome to Sugar Sync"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            />
+
+        <!-- Space between titles -->
+        <View
+            android:id="@+id/spaceBetweenTitles"
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:layout_below="@id/welcomeMessageTextView" />
+
+        <!-- Reviews title -->
+        <TextView
+            android:id="@+id/reviewsTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/spaceBetweenTitles"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="16dp"
+            android:text="Testimonies"
+            android:textSize="20sp" />
+
+        <!-- Horizontal layout for SAMPLE TEXT items -->
+        <LinearLayout
+            android:id="@+id/sampleTextLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/reviewsTitleTextView"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp">
+
+                <!-- Profile Picture for SAMPLE TEXT 1 -->
+                <ImageView
+                    android:id="@+id/profilePicture1"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@mipmap/ic_ss1_foreground"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"/>
+
+                <!-- SAMPLE TEXT 1 -->
+                <TextView
+                    android:id="@+id/sampleText1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/profilePicture1"
+                    android:text="SugarSync is an amazing app. I am now able to record all my results. I love how I am able to scan my results. (Mark Evans, Cork)"
+                    android:textSize="16sp"
+                    android:textStyle="italic"
+                    android:layout_marginTop="8dp" />
+            </RelativeLayout>
+            <!-- SAMPLE TEXT 2 -->
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp">
+
+                <!-- Profile Picture for SAMPLE TEXT 2 -->
+                <ImageView
+                    android:id="@+id/profilePicture2"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@mipmap/ic_ss2_foreground"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"/>
+
+                <!-- SAMPLE TEXT 2 -->
+                <TextView
+                    android:id="@+id/sampleText2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/profilePicture2"
+                    android:text="It's very easier to show my doctor all my past readings of my blood levels. (Melissa Smith, Dublin)"
+                    android:textSize="16sp"
+                    android:textStyle="italic"
+                    android:layout_marginTop="8dp" />
+            </RelativeLayout>
+
+            <!-- SAMPLE TEXT 3 with Profile Picture -->
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <!-- Profile Picture for SAMPLE TEXT 3 -->
+                <ImageView
+                    android:id="@+id/profilePicture3"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@mipmap/ic_ss3_foreground"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"/>
+
+                <!-- SAMPLE TEXT 3 -->
+                <TextView
+                    android:id="@+id/sampleText3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/profilePicture3"
+                    android:text="My favourite feature is that I am able to record my eating and exercising along with my sugar levels. (Karina Wyatt, Galway)"
+                    android:textSize="16sp"
+                    android:textStyle="italic"
+                    android:layout_marginTop="8dp" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <!-- Space between reviews and doctor's tip -->
+        <View
+            android:id="@+id/spaceBetweenReviewsAndDoctorsTip"
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:layout_below="@id/sampleTextLayout" />
+
+        <!-- Doctor's Tip -->
+        <TextView
+            android:id="@+id/doctorsTipTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/spaceBetweenReviewsAndDoctorsTip"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="16dp"
+            android:text="Doctor's Tip"
+            android:textSize="20sp" />
+
+        <!-- Sample text underneath Doctor's Tip -->
+        <TextView
+            android:id="@+id/sampleTextUnderDoctorsTip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/doctorsTipTextView"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="8dp"
+            android:text="Always test your blood sugar levels empty stomach. It is better to test sugar levels in the morning and do another test in the evening to see the progress. Always test regularly like twice every week."
+            android:textSize="16sp" />
+
+        <!-- Space between doctor's tip and about -->
+        <View
+            android:id="@+id/spaceBetweenDoctorsTipAndAbout"
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:layout_below="@id/sampleTextUnderDoctorsTip" />
+
+        <!-- About title -->
+        <TextView
+            android:id="@+id/aboutTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/spaceBetweenDoctorsTipAndAbout"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="16dp"
+            android:text="About"
+            android:textSize="20sp" />
+
+        <!-- About text -->
+        <TextView
+            android:id="@+id/aboutTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/aboutTitleTextView"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="8dp"
+            android:text="Sugar Sync is designed to help you manage your glucose levels effectively. Our goal is to provide a seamless experience for recording, tracking, and analyzing your glucose data. Providing you with all the data from glucose levels to your eating and exercising. Our mission is to keep the diabetes in check and live your life as normal as you can. Stay healthy with Sugar Sync!"
+            android:textSize="16sp" />
+
+        <!-- Space between about and contact details -->
+        <View
+            android:id="@+id/spaceBetweenAboutAndContactDetails"
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:layout_below="@id/aboutTextView" />
+
+        <!-- Contact Details title -->
+        <TextView
+            android:id="@+id/contactDetailsTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/spaceBetweenAboutAndContactDetails"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="16dp"
+            android:text="Contact Details"
+            android:textSize="20sp" />
+
+        <!-- Contact Details text -->
+        <TextView
+            android:id="@+id/contactDetailsTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/contactDetailsTitleTextView"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="8dp"
+            android:text="For inquiries and support, please contact us at support@sugarsync.com."
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
+</ScrollView>
+
+
+
+
+
+
+

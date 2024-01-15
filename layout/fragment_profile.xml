@@ -1,0 +1,119 @@
+<!-- fragment_profile.xml -->
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ProfileFragment">
+
+    <!-- Profile Title -->
+    <TextView
+        android:id="@+id/profileTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Profile"
+        android:textSize="36sp"
+    android:textStyle="bold"
+    android:layout_marginTop="16dp"
+    android:layout_centerHorizontal="true"/>
+
+    <!-- Profile Picture -->
+    <ImageView
+        android:id="@+id/profilePicture"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:src="@mipmap/ic_profile_foreground"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_below="@id/profileTitle"/>
+
+    <!-- Email TextView -->
+    <TextView
+        android:id="@+id/emailTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_below="@id/profileTitle"
+        android:layout_marginTop="32dp"
+        android:layout_toEndOf="@id/profilePicture"
+        android:layout_marginStart="16dp"
+        android:textSize="20sp"
+    />
+
+    <!-- Diabetes Type TextView -->
+    <TextView
+        android:id="@+id/diabetesTypeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_below="@id/emailTextView"
+        android:layout_marginTop="32dp"
+        android:layout_toEndOf="@id/profilePicture"
+        android:layout_marginStart="16dp"
+        android:textSize="20sp"
+    />
+
+    <!-- Insulin Therapy TextView -->
+    <TextView
+        android:id="@+id/insulinTherapyTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_below="@id/diabetesTypeTextView"
+        android:layout_marginTop="32dp"
+        android:layout_toEndOf="@id/profilePicture"
+        android:layout_marginStart="16dp"
+        android:textSize="20sp"
+    />
+
+    <!-- Pills TextView -->
+    <TextView
+        android:id="@+id/pillsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_below="@id/insulinTherapyTextView"
+        android:layout_marginTop="32dp"
+        android:layout_toEndOf="@id/profilePicture"
+        android:layout_marginStart="16dp"
+        android:textSize="20sp"
+    />
+
+    <!-- Units TextView -->
+    <TextView
+        android:id="@+id/unitsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_below="@id/pillsTextView"
+        android:layout_marginTop="32dp"
+        android:layout_toEndOf="@id/profilePicture"
+        android:layout_marginStart="16dp"
+        android:textSize="20sp"
+    />
+
+    <!-- Target Range TextView -->
+    <TextView
+        android:id="@+id/targetRangeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_below="@id/unitsTextView"
+        android:layout_marginTop="32dp"
+        android:layout_toEndOf="@id/profilePicture"
+        android:layout_marginStart="16dp"
+        android:textSize="20sp"
+    />
+
+    <!-- "Log Off" Button -->
+    <Button
+        android:id="@+id/btnLogOff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Log Off"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp" />
+
+</RelativeLayout>

@@ -1,0 +1,91 @@
+<!-- fragment_glucose.xml -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textBeforeCapture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Add your blood glucose levels"
+            android:textStyle="bold"
+        android:textSize="24sp"
+        android:layout_marginTop="16dp"
+        />
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/previewView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/capturedImageView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/bCapture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center"
+            android:text="Capture"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/extractedTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:text=""
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/bAddManually"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center"
+        android:text="Add manually"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/textBeforeGraph"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Glucose Levels:"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:textSize="24sp"
+    android:textColor="#000000"
+    />
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/lineChart"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="visible" />
+
+</LinearLayout>
+
+
+
+
+
+
