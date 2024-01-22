@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_home"
+        android:title="Home" />
+    <item
+        android:id="@+id/navigation_glucose"
+        android:title="Glucose" />
+    <item
+        android:id="@+id/navigation_diet"
+        android:title="Diet" />
+    <item
+        android:id="@+id/navigation_exercise"
+        android:title="Exercise" />
+    <item
+        android:id="@+id/navigation_profile"
+        android:title="Profile" />
+</menu>

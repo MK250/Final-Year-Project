@@ -57,6 +57,14 @@
         android:text="Submit"
         android:layout_gravity="center" />
 
+    <Button
+        android:id="@+id/buttonNext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Next"
+        android:layout_marginTop="16dp"/>
+
+
     <LinearLayout
         android:id="@+id/youtube_player_view"
         android:layout_width="match_parent"
@@ -66,6 +74,9 @@
         <!-- YouTube Player View will be added dynamically -->
 
     </LinearLayout>
+
+
+
 
 </LinearLayout>
 

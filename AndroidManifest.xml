@@ -8,6 +8,8 @@
     <uses-feature android:name="android.hardware.camera.flash" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
 
 
 
@@ -71,6 +73,18 @@
 
         <activity
             android:name=".Profile_Activity"
+            android:exported="true">
+            <!-- Add any intent filters or other attributes specific to Register_Activity here -->
+        </activity>
+
+        <activity
+            android:name=".ViewAllDietsActivity"
+            android:exported="true">
+            <!-- Add any intent filters or other attributes specific to Register_Activity here -->
+        </activity>
+
+        <activity
+            android:name=".ViewAllExerciseActivity"
             android:exported="true">
             <!-- Add any intent filters or other attributes specific to Register_Activity here -->
         </activity>
