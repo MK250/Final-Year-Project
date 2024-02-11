@@ -19,4 +19,3 @@ public class DateAxisValueFormatter extends ValueFormatter {
         return sdf.format(date);
     }
 }
-

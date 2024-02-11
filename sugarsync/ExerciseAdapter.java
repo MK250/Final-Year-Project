@@ -4,6 +4,9 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder> {
+public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder> implements Filterable {
 
     public interface OnEditClickListener {
         void onEditClick(int position, String field);
@@ -22,18 +25,64 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.Exerci
 
     private List<Exercise> exerciseList;
     private OnEditClickListener onEditClickListener;
+    private List<Exercise> exerciseListFull;
 
     // Constructor
     public ExerciseAdapter(OnEditClickListener onEditClickListener) {
         this.exerciseList = new ArrayList<>();
+        this.exerciseListFull = new ArrayList<>(exerciseList);
         this.onEditClickListener = onEditClickListener;
+
+
     }
 
-    /*
-    public void setOnEditClickListener(OnEditClickListener onEditClickListener) {
-        this.onEditClickListener = onEditClickListener;
+
+    public void setExerciseListFull(List<Exercise> exercises) {
+        this.exerciseListFull.clear(); // Clear the existing list
+        this.exerciseListFull.addAll(exercises); // Add all exercises to exerciseListFull
+        notifyDataSetChanged();
     }
-*/
+
+
+    @NonNull
+    @Override
+    public Filter getFilter() {
+        return exerciseFilter;
+    }
+
+    private Filter exerciseFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<Exercise> filteredList = new ArrayList<>();
+
+            if (constraint == null || constraint.length() == 0) {
+                filteredList.addAll(exerciseListFull);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+
+                for (Exercise exercise : exerciseListFull) {
+                    // Check if the exercise type or time contains the filter pattern
+                    if (exercise.getExerciseType().toLowerCase().contains(filterPattern) ||
+                            String.valueOf(exercise.getExerciseTime()).contains(filterPattern)) {
+                        filteredList.add(exercise);
+                    }
+                }
+            }
+
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            exerciseList.clear();
+            exerciseList.addAll((List<Exercise>) results.values);
+            notifyDataSetChanged();
+        }
+    };
+
+
     // ViewHolder class
     public static class ExerciseViewHolder extends RecyclerView.ViewHolder {
         TextView dateTextView, exerciseTypeTextView, exerciseTimeTextView;
@@ -94,24 +143,17 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.Exerci
 
         holder.editTypeButton.setOnClickListener(v -> {
             if (onEditClickListener != null) {
-                // Ensure the exercise has a valid ID before triggering the edit dialog
-                if (TextUtils.isEmpty(exercise.getId())) {
-                    exercise.setId(UUID.randomUUID().toString());
-                }
                 onEditClickListener.onEditClick(position, "Exercise Type");
             }
         });
 
         holder.editTimeButton.setOnClickListener(v -> {
             if (onEditClickListener != null) {
-                // Ensure the exercise has a valid ID before triggering the edit dialog
-                if (TextUtils.isEmpty(exercise.getId())) {
-                    exercise.setId(UUID.randomUUID().toString());
-                }
                 onEditClickListener.onEditClick(position, "Exercise Time");
             }
         });
     }
+
 
     @Override
     public int getItemCount() {

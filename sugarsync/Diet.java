@@ -1,11 +1,17 @@
 package com.example.sugarsync;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+
 
 public class Diet {
 
     private String id;
     private String date;
+
+
+
     private String breakfast;
     private String lunch;
     private String dinner;
@@ -14,6 +20,7 @@ public class Diet {
     public Diet() {
         this.id = UUID.randomUUID().toString();
     }
+
 
     // Constructor to initialize fields
     public Diet(String id, String date, String breakfast, String lunch, String dinner) {
@@ -95,5 +102,4 @@ public class Diet {
     }
 
 }
-
 

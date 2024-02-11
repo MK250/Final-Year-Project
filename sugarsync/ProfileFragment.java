@@ -3,13 +3,17 @@ package com.example.sugarsync;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -73,7 +77,7 @@ public class ProfileFragment extends Fragment {
             // Fetch email separately
 
             // Fetch selected options
-            userReference.child("selectedOptions").addListenerForSingleValueEvent(new ValueEventListener() {
+            userReference.child("selectedOptions").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     // Get selected options from Firebase
@@ -89,6 +93,9 @@ public class ProfileFragment extends Fragment {
                     pillsTextView.setText("Pills: " + pills);
                     unitsTextView.setText("Units for Blood Sugar: " + units);
                     targetRangeTextView.setText("Target Range: " + targetRange);
+
+                    ImageView editIcon = view.findViewById(R.id.editIcon);
+                    editIcon.setOnClickListener(v -> showEditDialog(diabetesType, insulinTherapy, pills, units, targetRange));
                 }
 
                 @Override
@@ -115,5 +122,69 @@ public class ProfileFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void showEditDialog(String diabetesType, String insulinTherapy, String pills, String units, String targetRange) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Edit Profile");
+
+        // Inflate the custom layout for the dialog
+        View editDialogView = LayoutInflater.from(requireContext()).inflate(R.layout.edit_profile_dialog, null);
+        builder.setView(editDialogView);
+
+        // Initialize EditTexts in the custom layout
+        EditText diabetesTypeEditText = editDialogView.findViewById(R.id.editDiabetesType);
+        EditText insulinTherapyEditText = editDialogView.findViewById(R.id.editInsulinTherapy);
+        EditText pillsEditText = editDialogView.findViewById(R.id.editPills);
+        EditText unitsEditText = editDialogView.findViewById(R.id.editUnits);
+        EditText targetRangeEditText = editDialogView.findViewById(R.id.editTargetRange);
+
+        // Set the initial values in EditTexts
+        diabetesTypeEditText.setText(diabetesType);
+        insulinTherapyEditText.setText(insulinTherapy);
+        pillsEditText.setText(pills);
+        unitsEditText.setText(units);
+        targetRangeEditText.setText(targetRange);
+
+        // Set positive button to save changes
+        builder.setPositiveButton("Save", (dialog, which) -> {
+            // Get the edited values
+            String editedDiabetesType = diabetesTypeEditText.getText().toString();
+            String editedInsulinTherapy = insulinTherapyEditText.getText().toString();
+            String editedPills = pillsEditText.getText().toString();
+            String editedUnits = unitsEditText.getText().toString();
+            String editedTargetRange = targetRangeEditText.getText().toString();
+
+            // Update the values in Firebase
+            updateProfileData(editedDiabetesType, editedInsulinTherapy, editedPills, editedUnits, editedTargetRange);
+        });
+
+        // Set negative button to cancel
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+
+        // Show the dialog
+        builder.create().show();
+    }
+
+    // Method to update the profile data in Firebase
+    private void updateProfileData(String diabetesType, String insulinTherapy, String pills, String units, String targetRange) {
+        // Get user ID from Firebase authentication
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            // User not logged in, handle accordingly
+            return;
+        }
+
+        String userId = currentUser.getUid();
+
+        // Update the values in Firebase
+        userReference.child("selectedOptions").child("Question 1").setValue(diabetesType);
+        userReference.child("selectedOptions").child("Question 2").setValue(insulinTherapy);
+        userReference.child("selectedOptions").child("Question 3").setValue(pills);
+        userReference.child("selectedOptions").child("Question 4").setValue(units);
+        userReference.child("selectedOptions").child("Question 5").setValue(targetRange);
+
+        // Notify the user that changes are saved
+        Toast.makeText(requireContext(), "Changes saved", Toast.LENGTH_SHORT).show();
     }
 }

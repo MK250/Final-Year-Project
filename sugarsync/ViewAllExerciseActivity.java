@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +24,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -31,6 +34,8 @@ public class ViewAllExerciseActivity extends AppCompatActivity implements Exerci
 
     private RecyclerView recyclerView;
     private ExerciseAdapter exerciseAdapter;
+
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +53,31 @@ public class ViewAllExerciseActivity extends AppCompatActivity implements Exerci
 
 
 
+        searchView = findViewById(R.id.searchView);
+
+        // Setup search functionality
+        setupSearchView();
 
         // Retrieve exercise data from Firebase and populate the adapter
-        retrieveExerciseData();
+       retrieveExerciseData();
+
+    }
+
+    private void setupSearchView() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // Perform search when user submits query (not used in this example)
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // Filter the adapter when text changes in the search bar
+                exerciseAdapter.getFilter().filter(newText);
+                return true;
+            }
+        });
     }
 
 
@@ -74,6 +101,7 @@ public class ViewAllExerciseActivity extends AppCompatActivity implements Exerci
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                 .show();
     }
+
 
     private void updateExercise(int position, Exercise exercise, String field, String newValue) {
         // Update the Exercise based on the field (type or time)
@@ -113,8 +141,15 @@ public class ViewAllExerciseActivity extends AppCompatActivity implements Exerci
         // Create a reference to the specific exercise entry
         DatabaseReference exerciseRef = userExercisesRef.child(exerciseKey);
 
-        // Update the values in Firebase
-        exerciseRef.setValue(exercise).addOnSuccessListener(aVoid -> {
+        // Create a new Exercise object with updated values
+        Exercise updatedExercise = new Exercise(
+                exercise.getDate(),
+                exercise.getExerciseType(),
+                exercise.getExerciseTime()
+        );
+
+        // Update the values in Firebase using the new Exercise object
+        exerciseRef.setValue(updatedExercise).addOnSuccessListener(aVoid -> {
             // Notify the adapter that the specific item has changed
             exerciseAdapter.notifyItemChanged(position);
 
@@ -145,19 +180,22 @@ public class ViewAllExerciseActivity extends AppCompatActivity implements Exerci
         exercisesRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // Clear existing exercises
-                exerciseAdapter.clearExercises();
+                List<Exercise> exercises = new ArrayList<>();
 
                 // Iterate through the exercises and add them to the adapter
                 for (DataSnapshot exerciseSnapshot : dataSnapshot.getChildren()) {
                     Exercise exercise = exerciseSnapshot.getValue(Exercise.class);
                     if (exercise != null) {
+
                         exerciseAdapter.addExercise(exercise);
                     }
                 }
-
+                exerciseAdapter.setExerciseListFull(exercises);
                 // Notify the adapter that the data set has changed
+
                 exerciseAdapter.notifyDataSetChanged();
+
+
             }
 
             @Override
@@ -166,6 +204,5 @@ public class ViewAllExerciseActivity extends AppCompatActivity implements Exerci
             }
         });
     }
-
 
 }

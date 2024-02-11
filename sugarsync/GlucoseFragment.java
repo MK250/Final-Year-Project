@@ -10,6 +10,7 @@ import static androidx.fragment.app.FragmentManager.TAG;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.BitmapFactory;
@@ -27,9 +28,13 @@ import android.util.Log;
 import android.util.Size;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -59,6 +64,7 @@ import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.camera.core.ImageCaptureException;
 import androidx.annotation.NonNull;
@@ -88,6 +94,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import net.sourceforge.tess4j.Tesseract;
@@ -104,6 +111,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -140,14 +148,17 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
         View view = inflater.inflate(R.layout.fragment_glucose, container, false);
         glucoseEntries = new ArrayList<>();
         lineChart = view.findViewById(R.id.lineChart);
-       // configureLineChart();
+        // configureLineChart();
         previewView = view.findViewById(R.id.previewView);
         bCapture = view.findViewById(R.id.bCapture);
         capturedImageView = view.findViewById(R.id.capturedImageView);
         extractedTextView = view.findViewById(R.id.extractedTextView);
 
+        //etEntryDate = view.findViewById(R.id.etEntryDate);
+
         Button bAddManually = view.findViewById(R.id.bAddManually);
         bAddManually.setOnClickListener(v -> showManualEntryDialog());
+
 
 
         bCapture.setOnClickListener(v -> {
@@ -167,75 +178,109 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
             }
         });
 
-
-        configureLineChart();
         fetchUserGlucoseData();
+        configureLineChart();
+        //updateLineChartWithData();
+        //fetchUserGlucoseData();
 
         return view;
     }
 
     private void showManualEntryDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Manual Entry");
-
-        // Set up the layout for the dialog
-        LayoutInflater inflater = requireActivity().getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_manual_entry, null);
+        builder.setTitle("Add Manual Entry");
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_manual_entry, null);
         builder.setView(dialogView);
 
-        // Find views in the dialog layout
+        EditText etTime = dialogView.findViewById(R.id.etTime);
         EditText etGlucoseLevel = dialogView.findViewById(R.id.etGlucoseLevel);
-        EditText etEntryDate = dialogView.findViewById(R.id.etEntryDate);
 
-        // Set up date picker for etEntryDate
-        etEntryDate.setFocusable(false); // Prevent the keyboard from showing
-        etEntryDate.setOnClickListener(v -> showDatePickerDialog());
+        // Use a DatePicker to get the date
+        DatePicker datePicker = dialogView.findViewById(R.id.datePicker);
 
-        builder.setPositiveButton("Submit", (dialog, which) -> {
-            // Get the entered values
+        builder.setPositiveButton("Add", (dialog, which) -> {
+            String time = etTime.getText().toString();
             String glucoseLevel = etGlucoseLevel.getText().toString();
-            String entryDate = etEntryDate.getText().toString();
 
-            // Validate the input (you may add more validation as needed)
-            if (!glucoseLevel.isEmpty() && !entryDate.isEmpty()) {
-                // Convert entryDate to timestamp (you may use a suitable method)
-                long timestamp = convertDateToTimestamp(entryDate);
+            int day = datePicker.getDayOfMonth();
+            int month = datePicker.getMonth();
+            int year = datePicker.getYear();
 
-                // Add the manual entry to the LineChart and Firebase
-                glucoseEntries.add(new Entry(timestamp, Float.parseFloat(glucoseLevel)));
-                updateLineChartWithData();
-                pushManualEntryToFirebase(glucoseLevel, timestamp);
-            } else {
-                // Show an error message if input is invalid
-                Toast.makeText(requireContext(), "Invalid input. Please enter both glucose level and date.", Toast.LENGTH_SHORT).show();
-            }
+            // Convert date and time to timestamp
+            long timestamp = convertDateTimeToTimestamp(day, month, year, time);
+
+            // Push the manual entry to Firebase
+            pushManualEntryToFirebase(glucoseLevel, timestamp);
+
+            // Update LineChart with new data
+            //updateLineChartWithData();
         });
 
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
 
-        // Show the dialog
-        builder.create().show();
+        builder.show();
     }
 
-    private void showDatePickerDialog() {
-        DatePickerFragment datePickerFragment = new DatePickerFragment(etEntryDate);
-        datePickerFragment.show(getChildFragmentManager(), "datePicker");
-    }
-
-
-
-    private long convertDateToTimestamp(String date) {
+    private long convertDateTimeToTimestamp(int day, int month, int year, String time) {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
-            Date parsedDate = sdf.parse(date);
-            if (parsedDate != null) {
-                return parsedDate.getTime();
-            }
+            String dateTimeString = String.format(Locale.getDefault(), "%02d/%02d/%04d %s", month + 1, day, year, time);
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault());
+
+            Date dateTime = sdf.parse(dateTimeString);
+
+
+            return dateTime.getTime();
         } catch (ParseException e) {
             e.printStackTrace();
+            return -1;
         }
-        return System.currentTimeMillis();  // Return current time if conversion fails
     }
+
+
+    private String formatDate(int year, int month, int day) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month - 1, day); // month is zero-based
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+        return sdf.format(calendar.getTime());
+    }
+
+
+
+    private long convertDateTimeToTimestamp(String date, String time) {
+        try {
+            String dateTimeString = date + " " + time;
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault());
+            Date dateTime = sdf.parse(dateTimeString);
+            return dateTime.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true); // Ensure that the fragment has options menu
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_glucose_fragment, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menu_view_all) {
+            // Handle the menu item click to open ViewAllGlucoseActivity
+            startActivity(new Intent(requireContext(), ViewAllGlucoseActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
 
 
 
@@ -262,7 +307,12 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
             glucoseEntries.add(new Entry(timestamp, Float.parseFloat(glucoseLevel)));
 
             // Update LineChart with new data
-            updateLineChartWithData();
+         //   updateLineChartWithData();
+
+            Toast.makeText(requireContext(), "Data saved successfully", Toast.LENGTH_SHORT).show();
+
+
+            //  Log.d("ManualEntry", "Timestamp: " + timestamp + ", Glucose Level: " + glucoseLevel);
         } else {
             // Handle the case where the user is not authenticated
             Toast.makeText(requireContext(), "User not authenticated", Toast.LENGTH_SHORT).show();
@@ -317,14 +367,13 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
         lineChart.getDescription().setEnabled(false);
 
         XAxis xAxis = lineChart.getXAxis();
-        xAxis.setValueFormatter(new DateAxisValueFormatter());
+        xAxis.setValueFormatter(new DateAxisValueFormatter()); // Set the DateAxisValueFormatter here
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularity(1f);
-       // updateLineChartWithData(glucoseEntries);
 
         lineChart.setOnChartValueSelectedListener(this);
-
     }
+
 
     @Override
     public void onValueSelected(Entry e, Highlight h) {
@@ -364,8 +413,12 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
 
 
     private void updateLineChartWithData() {
-        // Add new entry to the LineChart
-        glucoseEntries.add(new Entry(glucoseEntries.size(), 5));
+        // Sort glucoseEntries based on timestamps
+
+        float glucoseLevel = 5.5f;
+
+        glucoseEntries.add(new Entry(glucoseEntries.size(), glucoseLevel));
+        Collections.sort(glucoseEntries, (entry1, entry2) -> Long.compare((long) entry1.getX(), (long) entry2.getX()));
 
         // Create a LineDataSet and set data
         LineDataSet dataSet = new LineDataSet(glucoseEntries, "Glucose Levels");
@@ -377,19 +430,15 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
         // Set data to LineChart
         lineChart.setData(lineData);
 
-        // Configure scrolling and initial view position
-        float visibleRange = 10.0f;  // Set the number of visible entries
-        lineChart.setVisibleXRangeMinimum(visibleRange);
-        lineChart.setVisibleXRangeMaximum(visibleRange);
-
-        // Set the initial view position
-        float initialViewPosition = Math.max(0, glucoseEntries.size() - visibleRange);
-        lineChart.moveViewToX(initialViewPosition);
+        // Configure X-axis
+        XAxis xAxis = lineChart.getXAxis();
+        xAxis.setValueFormatter(new DateAxisValueFormatter()); // Assuming you have a DateAxisValueFormatter
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1f);
 
         // Notify LineChart that data has changed
         lineChart.notifyDataSetChanged();
         lineChart.invalidate();
-
     }
 
 
@@ -577,30 +626,66 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
 
     private void pushToFirebase(String glucoseLevel) {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-
-        // Check if the user is authenticated
         FirebaseUser currentUser = mAuth.getCurrentUser();
+
         if (currentUser != null) {
-            // Get the user's unique identifier (Firebase User ID)
             String userId = currentUser.getUid();
+            DatabaseReference userRef = myRef.child("users").child(userId);
 
-            // Create a reference for the user
-            DatabaseReference userRef = myRef.child(userId);
-
-            // Set the glucose level as the value for the new reference directly under the user's node
             DatabaseReference glucoseRef = userRef.child("glucoseLevels").child(String.valueOf(System.currentTimeMillis()));
-
-            // Set the glucose level as the value for the new reference
             glucoseRef.setValue(glucoseLevel);
 
-            glucoseEntries.add(new Entry(glucoseEntries.size(), Float.parseFloat(glucoseLevel)));
-            Log.d("Chart", "Added entry to glucoseEntries. Size: " + glucoseEntries.size());
+            float glucoseValue = Float.parseFloat(glucoseLevel);
+            if (glucoseValue > 6.0) {
+                // If glucose level is more than 6.0, check exercise time
+                DatabaseReference exerciseRef = userRef.child("exercise");
+
+                exerciseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        long currentTimeMillis = System.currentTimeMillis();
+                        int totalExerciseTime = 0;
+                        for (DataSnapshot exerciseSnapshot : snapshot.getChildren()) {
+                            // Extract exercise data
+                            String exerciseId = exerciseSnapshot.getKey();
+                            String exerciseTime = exerciseSnapshot.child("exerciseTime").getValue(String.class);
+                            String exerciseType = exerciseSnapshot.child("exerciseType").getValue(String.class);
+
+                            // Calculate total exercise time
+                            totalExerciseTime += Integer.parseInt(exerciseTime);
+                        }
+
+                        // Check if total exercise time is less than 130 minutes in the past 24 hours
+                        if (totalExerciseTime < 130) {
+                            // Notify user about insufficient exercise
+                            showExerciseAlert();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("Firebase", "Error fetching exercise data: " + error.getMessage());
+                    }
+                });
+            }
+
             // Update LineChart with new data
+            glucoseEntries.add(new Entry(glucoseEntries.size(), Float.parseFloat(glucoseLevel)));
             updateLineChartWithData();
         } else {
             // Handle the case where the user is not authenticated
             Toast.makeText(requireContext(), "User not authenticated", Toast.LENGTH_SHORT).show();
         }
-
     }
+
+    private void showExerciseAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Insufficient Exercise")
+                .setMessage("Your glucose level is above 6.0 and you haven't exercised enough in the past 24 hours.")
+                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+
+
 }
