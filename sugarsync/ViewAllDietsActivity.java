@@ -213,3 +213,4 @@ public class ViewAllDietsActivity extends AppCompatActivity {
     }
 
 }
+

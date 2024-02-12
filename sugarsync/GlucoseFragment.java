@@ -625,14 +625,27 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
 
 
     private void pushToFirebase(String glucoseLevel) {
+        if (glucoseLevel.isEmpty()) {
+            Toast.makeText(requireContext(), "Glucose level is empty", Toast.LENGTH_SHORT).show();
+            return; // Don't proceed further if glucose level is empty
+        }
+
+
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+        // Check if the user is authenticated
         FirebaseUser currentUser = mAuth.getCurrentUser();
-
         if (currentUser != null) {
+            // Get the user's unique identifier (Firebase User ID)
             String userId = currentUser.getUid();
-            DatabaseReference userRef = myRef.child("users").child(userId);
 
+            // Create a reference for the user
+            DatabaseReference userRef = myRef.child(userId);
+
+            // Set the glucose level as the value for the new reference directly under the user's node
             DatabaseReference glucoseRef = userRef.child("glucoseLevels").child(String.valueOf(System.currentTimeMillis()));
+
+            // Set the glucose level as the value for the new reference
             glucoseRef.setValue(glucoseLevel);
 
             float glucoseValue = Float.parseFloat(glucoseLevel);
@@ -648,18 +661,31 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
                         for (DataSnapshot exerciseSnapshot : snapshot.getChildren()) {
                             // Extract exercise data
                             String exerciseId = exerciseSnapshot.getKey();
-                            String exerciseTime = exerciseSnapshot.child("exerciseTime").getValue(String.class);
+                            Double exerciseTime = exerciseSnapshot.child("exerciseTime").getValue(Double.class);
                             String exerciseType = exerciseSnapshot.child("exerciseType").getValue(String.class);
 
+// Calculate total exercise time
+                            totalExerciseTime += exerciseTime != null ? exerciseTime.intValue() : 0; // Convert Double to int
+
+
                             // Calculate total exercise time
-                            totalExerciseTime += Integer.parseInt(exerciseTime);
+
+
+                            Log.d("Exercise", "Total exercise time in the past 24 hours: " + totalExerciseTime);
                         }
 
                         // Check if total exercise time is less than 130 minutes in the past 24 hours
+                        // Check if total exercise time is less than 130 minutes in the past 24 hours
                         if (totalExerciseTime < 130) {
                             // Notify user about insufficient exercise
+                            Log.d("Exercise", "Showing exercise alert");
                             showExerciseAlert();
+                        } else {
+                            // Notify user about sufficient exercise
+                            Log.d("Exercise", "Sufficient exercise being done.");
+                            Toast.makeText(requireContext(), "Well done - exercise being done", Toast.LENGTH_SHORT).show();
                         }
+
                     }
 
                     @Override
@@ -678,13 +704,21 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
         }
     }
 
+
+
     private void showExerciseAlert() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Insufficient Exercise")
-                .setMessage("Your glucose level is above 6.0 and you haven't exercised enough in the past 24 hours.")
-                .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
-                .show();
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            builder.setTitle("Insufficient Exercise")
+                    .setMessage("Your glucose level is above 6.0 and you haven't exercised enough in the past 24 hours.")
+                    .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+                    .show();
+            Log.d("AlertDialog", "Exercise alert dialog shown successfully.");
+        } catch (Exception e) {
+            Log.e("AlertDialog", "Error showing exercise alert dialog: " + e.getMessage());
+        }
     }
+
 
 
 

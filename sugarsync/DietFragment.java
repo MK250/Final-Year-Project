@@ -22,8 +22,11 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -66,7 +69,7 @@ public class DietFragment extends Fragment {
         editTextLunch = view.findViewById(R.id.editTextLunch);
         editTextDinner = view.findViewById(R.id.editTextDinner);
         buttonSubmit = view.findViewById(R.id.buttonSubmit);
-       //recyclerView = view.findViewById(R.id.recyclerView);
+        //recyclerView = view.findViewById(R.id.recyclerView);
 
         //RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
 
@@ -276,3 +279,4 @@ public class DietFragment extends Fragment {
     }
 
 }
+

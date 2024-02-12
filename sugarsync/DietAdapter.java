@@ -185,3 +185,4 @@ public class DietAdapter extends RecyclerView.Adapter<DietAdapter.DietViewHolder
         return dietList.size();
     }
 }
+
