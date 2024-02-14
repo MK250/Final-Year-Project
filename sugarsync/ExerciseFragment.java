@@ -14,12 +14,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
@@ -35,19 +40,17 @@ public class ExerciseFragment extends Fragment {
 
     private LinearLayout youtubePlayerContainer;
     private Button buttonSubmit;
-
     private Button buttonNext;
-
-
-    //private YouTubePlayerView youTubePlayerView;
     private EditText editTextExerciseType, editTextExerciseTime;
+    private ProgressBar progressBar;
+    private String lastUpdatedDate;
 
+    private TextView textProgressFraction;
 
     private List<String> playlist = Arrays.asList(
             "ePylP2XmNRs",
             "WDIGXWZhC4M",
-            "EsVLl_bEcXw" );
-
+            "EsVLl_bEcXw");
 
     private int currentVideoIndex = 0;
 
@@ -59,19 +62,22 @@ public class ExerciseFragment extends Fragment {
         editTextExerciseTime = view.findViewById(R.id.editTextExerciseTime);
         buttonSubmit = view.findViewById(R.id.buttonSubmit);
         buttonNext = view.findViewById(R.id.buttonNext);
-
         youtubePlayerContainer = view.findViewById(R.id.youtube_player_view);
-       // youTubePlayerView = new YouTubePlayerView(requireContext());
-        buttonSubmit = view.findViewById(R.id.buttonSubmit);
+        progressBar = view.findViewById(R.id.progressBar);
+        textProgressFraction = view.findViewById(R.id.textProgressFraction);
 
-        // Set a click listener for the Submit button
-        //buttonSubmit.setOnClickListener(v -> refreshYouTubeVideo());
         buttonSubmit.setOnClickListener(v -> saveExerciseData());
-
         buttonNext.setOnClickListener(v -> refreshYouTubeVideo());
         refreshYouTubeVideo(); // Load the initial video
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Call resetProgressBarIfNeeded only when the fragment is resumed
+        resetProgressBarIfNeeded();
     }
 
     @Override
@@ -99,49 +105,76 @@ public class ExerciseFragment extends Fragment {
 
 
     private void saveExerciseData() {
-        // Get user ID from Firebase authentication
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
-            // User not logged in, handle accordingly
             return;
         }
 
         String userId = currentUser.getUid();
-
-        // Get the exercise data from EditText fields
         String exerciseType = editTextExerciseType.getText().toString();
         double exerciseTime = Double.parseDouble(editTextExerciseTime.getText().toString());
 
-        // Get the current date
+        updateProgressBar(exerciseTime);
+
         String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        lastUpdatedDate = date;
+        saveDateToFirebase(date);
 
-        // Create a reference to the "users" node in Firebase
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
-
-        // Create a child node under "users" with the user ID
         DatabaseReference userExercisesRef = usersRef.child(userId).child("exercise");
-
-        // Generate a unique key for each exercise entry
         String exerciseId = userExercisesRef.push().getKey();
-
-        // Create a child node under "exercise" with the generated key
         DatabaseReference exerciseRef = userExercisesRef.child(exerciseId);
-
-        // Set values for the "exercise" node
-        exerciseRef.child("date").setValue(date); // Set the date field
+        exerciseRef.child("date").setValue(date);
         exerciseRef.child("exerciseType").setValue(exerciseType);
         exerciseRef.child("exerciseTime").setValue(exerciseTime);
 
-        // Clear the input fields
         editTextExerciseType.setText("");
         editTextExerciseTime.setText("");
 
-        // Display a toast message
         Toast.makeText(requireContext(), "Exercise is saved", Toast.LENGTH_SHORT).show();
     }
 
+    private void updateProgressBar(double exerciseTime) {
+        int progress = (int) (progressBar.getProgress() + exerciseTime);
+        if (progress > 130) {
+            progressBar.setProgress(130);
+            progress = 130;
+        } else {
+            progressBar.setProgress(progress);
+        }
+
+        String progressText = progress + "/130";
+        textProgressFraction.setText(progressText);
+    }
+
+    private void resetProgressBarIfNeeded() {
+        DatabaseReference lastUpdatedDateRef = FirebaseDatabase.getInstance().getReference("lastUpdatedDate");
+        lastUpdatedDateRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String lastUpdatedDate = dataSnapshot.getValue(String.class);
+                String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+                if (lastUpdatedDate == null || !currentDate.equals(lastUpdatedDate)) {
+                    progressBar.setProgress(0);
+                    lastUpdatedDateRef.setValue(currentDate);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle potential errors here
+            }
+        });
+    }
+
+    private void saveDateToFirebase(String date) {
+        DatabaseReference lastUpdatedDateRef = FirebaseDatabase.getInstance().getReference("lastUpdatedDate");
+        lastUpdatedDateRef.setValue(date);
+    }
+
+
     private void refreshYouTubeVideo() {
-        // Refresh the YouTube video by re-initializing the player
         YouTubePlayerView youTubePlayerView = new YouTubePlayerView(requireContext());
         youtubePlayerContainer.removeAllViews();
         youtubePlayerContainer.addView(youTubePlayerView);
@@ -149,16 +182,9 @@ public class ExerciseFragment extends Fragment {
         youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
             @Override
             public void onReady(YouTubePlayer youTubePlayer) {
-                // Load the video from the playlist based on the current index
                 youTubePlayer.loadVideo(playlist.get(currentVideoIndex), 0);
-
-                // Increment the index for the next video
                 currentVideoIndex = (currentVideoIndex + 1) % playlist.size();
-
-                // Optional: Implement logic to play the next video when the current one ends
-
             }
         });
     }
 }
-
