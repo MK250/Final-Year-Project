@@ -64,6 +64,23 @@
         android:text="Next"
         android:layout_marginTop="16dp"/>
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+    android:progress="0"
+    android:max="130"
+    style="?android:attr/progressBarStyleHorizontal" />
+
+    <TextView
+        android:id="@+id/textProgressFraction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0/130"
+        android:layout_marginStart="8dp"
+        android:textSize="12sp"
+        android:textColor="@android:color/black"/>
+
 
     <LinearLayout
         android:id="@+id/youtube_player_view"
@@ -75,9 +92,4 @@
 
     </LinearLayout>
 
-
-
-
 </LinearLayout>
-
-

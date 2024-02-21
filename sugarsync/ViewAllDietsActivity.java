@@ -35,6 +35,8 @@ public class ViewAllDietsActivity extends AppCompatActivity {
         dietAdapter = new DietAdapter();
         recyclerView.setAdapter(dietAdapter);
 
+
+
         dietAdapter.setOnDeleteClickListener((position, diet, mealType) -> showDeleteConfirmationDialog(position, diet, "all"));
 
 
@@ -76,6 +78,8 @@ public class ViewAllDietsActivity extends AppCompatActivity {
                     } else {
                         titleTextView.setText("No Diets Found");
                     }
+
+                    recyclerView.post(() -> recyclerView.smoothScrollToPosition(dietAdapter.getItemCount() - 1));
                 }
 
                 @Override

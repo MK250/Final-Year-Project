@@ -11,7 +11,10 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="Home" />
+        android:text="Home"
+        android:drawableStart="@drawable/baseline_home_24"
+        android:drawablePadding="8dp" />
+
 
     <TextView
         android:id="@+id/nav_glucose"

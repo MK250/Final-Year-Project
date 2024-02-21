@@ -1,227 +1,170 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeFragment">
+    android:fillViewport="true">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <!-- Title at the top -->
-        <TextView
-            android:id="@+id/welcomeMessageTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:paddingTop="16dp"
-            android:text="Welcome to Sugar Sync"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            />
+    <!-- Welcome Text -->
+    <TextView
+        android:id="@+id/textTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Welcome to Sugar Sync"
+        android:textSize="24sp"
+        android:textColor="#3E007D"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dp"/>
 
-        <!-- Space between titles -->
-        <View
-            android:id="@+id/spaceBetweenTitles"
-            android:layout_width="match_parent"
-            android:layout_height="16dp"
-            android:layout_below="@id/welcomeMessageTextView" />
+    <!-- Blood Level Progress -->
+    <TextView
+        android:id="@+id/textBloodLevelTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Blood Level"
+        android:textSize="18sp"
+        android:textColor="#0E0E0E"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"/>
+    <ProgressBar
+        android:id="@+id/progressBloodLevel"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:max="100"
+        android:progress="70"
+        android:progressDrawable="@drawable/round_progress_blood_level"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true" />
 
-        <!-- Reviews title -->
-        <TextView
-            android:id="@+id/reviewsTitleTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/spaceBetweenTitles"
-            android:layout_centerHorizontal="true"
-            android:paddingTop="16dp"
-            android:text="Testimonies"
-            android:textSize="20sp" />
+    <!-- Sugar Intake and Exercise Time -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
 
-        <!-- Horizontal layout for SAMPLE TEXT items -->
+        <!-- Sugar Intake Progress -->
         <LinearLayout
-            android:id="@+id/sampleTextLayout"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_below="@id/reviewsTitleTextView"
-            android:layout_centerHorizontal="true"
-            android:orientation="horizontal">
-
-            <RelativeLayout
-                android:layout_width="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/textSugarIntakeTitle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp">
-
-                <!-- Profile Picture for SAMPLE TEXT 1 -->
-                <ImageView
-                    android:id="@+id/profilePicture1"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@mipmap/ic_ss1_foreground"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"/>
-
-                <!-- SAMPLE TEXT 1 -->
-                <TextView
-                    android:id="@+id/sampleText1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/profilePicture1"
-                    android:text="SugarSync is an amazing app. I am now able to record all my results. I love how I am able to scan my results. (Mark Evans, Cork)"
-                    android:textSize="16sp"
-                    android:textStyle="italic"
-                    android:layout_marginTop="8dp" />
-            </RelativeLayout>
-            <!-- SAMPLE TEXT 2 -->
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp">
-
-                <!-- Profile Picture for SAMPLE TEXT 2 -->
-                <ImageView
-                    android:id="@+id/profilePicture2"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@mipmap/ic_ss2_foreground"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"/>
-
-                <!-- SAMPLE TEXT 2 -->
-                <TextView
-                    android:id="@+id/sampleText2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/profilePicture2"
-                    android:text="It's very easier to show my doctor all my past readings of my blood levels. (Melissa Smith, Dublin)"
-                    android:textSize="16sp"
-                    android:textStyle="italic"
-                    android:layout_marginTop="8dp" />
-            </RelativeLayout>
-
-            <!-- SAMPLE TEXT 3 with Profile Picture -->
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
-
-                <!-- Profile Picture for SAMPLE TEXT 3 -->
-                <ImageView
-                    android:id="@+id/profilePicture3"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@mipmap/ic_ss3_foreground"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerHorizontal="true"/>
-
-                <!-- SAMPLE TEXT 3 -->
-                <TextView
-                    android:id="@+id/sampleText3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/profilePicture3"
-                    android:text="My favourite feature is that I am able to record my eating and exercising along with my sugar levels. (Karina Wyatt, Galway)"
-                    android:textSize="16sp"
-                    android:textStyle="italic"
-                    android:layout_marginTop="8dp" />
-            </RelativeLayout>
-
+                android:text="Sugar Intake"
+                android:textSize="18sp"
+                android:textColor="#090808"/>
+            <ProgressBar
+                android:id="@+id/progressSugarIntake"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:max="100"
+                android:progress="50"
+                android:progressDrawable="@drawable/round_progress_sugar_intake"
+                android:layout_marginTop="10dp"/>
         </LinearLayout>
 
-        <!-- Space between reviews and doctor's tip -->
-        <View
-            android:id="@+id/spaceBetweenReviewsAndDoctorsTip"
-            android:layout_width="match_parent"
-            android:layout_height="16dp"
-            android:layout_below="@id/sampleTextLayout" />
+        <!-- Exercise Time Progress -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/textExerciseTimeTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Exercise Time"
+                android:textSize="18sp"
+                android:textColor="#070707"/>
+            <ProgressBar
+                android:id="@+id/progressExerciseTime"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:max="100"
+                android:progress="30"
+                android:progressDrawable="@drawable/round_progress_exercise_time"
+                android:layout_marginTop="10dp"/>
+        </LinearLayout>
 
-        <!-- Doctor's Tip -->
+    </LinearLayout>
+
+        <!-- Blood Glucose BarChart Title -->
         <TextView
-            android:id="@+id/doctorsTipTextView"
+            android:id="@+id/textBloodGlucoseTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/spaceBetweenReviewsAndDoctorsTip"
-            android:layout_centerHorizontal="true"
-            android:paddingTop="16dp"
-            android:text="Doctor's Tip"
-            android:textSize="20sp" />
+            android:text="Blood Glucose"
+            android:textSize="18sp"
+            android:textColor="#070707"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal" />
 
-        <!-- Sample text underneath Doctor's Tip -->
-        <TextView
-            android:id="@+id/sampleTextUnderDoctorsTip"
+        <!-- Blood Glucose BarChart -->
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/barChartBloodGlucose"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/doctorsTipTextView"
-            android:layout_centerHorizontal="true"
-            android:paddingTop="8dp"
-            android:text="Always test your blood sugar levels empty stomach. It is better to test sugar levels in the morning and do another test in the evening to see the progress. Always test regularly like twice every week."
-            android:textSize="16sp" />
+            android:layout_height="300dp"
+            android:layout_marginTop="10dp" />
 
-        <!-- Space between doctor's tip and about -->
-        <View
-            android:id="@+id/spaceBetweenDoctorsTipAndAbout"
-            android:layout_width="match_parent"
-            android:layout_height="16dp"
-            android:layout_below="@id/sampleTextUnderDoctorsTip" />
-
-        <!-- About title -->
+        <!-- Sugar Intake BarChart Title -->
         <TextView
-            android:id="@+id/aboutTitleTextView"
+            android:id="@+id/textSugarIntakeTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/spaceBetweenDoctorsTipAndAbout"
-            android:layout_centerHorizontal="true"
-            android:paddingTop="16dp"
-            android:text="About"
-            android:textSize="20sp" />
+            android:text="Sugar Intake"
+            android:textSize="18sp"
+            android:textColor="#070707"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal" />
 
-        <!-- About text -->
-        <TextView
-            android:id="@+id/aboutTextView"
+        <!-- Sugar Intake BarChart -->
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/barChartSugarIntake"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/aboutTitleTextView"
-            android:layout_centerHorizontal="true"
-            android:paddingTop="8dp"
-            android:text="Sugar Sync is designed to help you manage your glucose levels effectively. Our goal is to provide a seamless experience for recording, tracking, and analyzing your glucose data. Providing you with all the data from glucose levels to your eating and exercising. Our mission is to keep the diabetes in check and live your life as normal as you can. Stay healthy with Sugar Sync!"
-            android:textSize="16sp" />
+            android:layout_height="300dp"
+            android:layout_marginTop="10dp" />
 
-        <!-- Space between about and contact details -->
-        <View
-            android:id="@+id/spaceBetweenAboutAndContactDetails"
-            android:layout_width="match_parent"
-            android:layout_height="16dp"
-            android:layout_below="@id/aboutTextView" />
-
-        <!-- Contact Details title -->
+        <!-- Exercise BarChart Title -->
         <TextView
-            android:id="@+id/contactDetailsTitleTextView"
+            android:id="@+id/textExerciseTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/spaceBetweenAboutAndContactDetails"
-            android:layout_centerHorizontal="true"
-            android:paddingTop="16dp"
-            android:text="Contact Details"
-            android:textSize="20sp" />
+            android:text="Exercise"
+            android:textSize="18sp"
+            android:textColor="#070707"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal" />
 
-        <!-- Contact Details text -->
-        <TextView
-            android:id="@+id/contactDetailsTextView"
+        <!-- Exercise BarChart -->
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/barChartExercise"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/contactDetailsTitleTextView"
-            android:layout_centerHorizontal="true"
-            android:paddingTop="8dp"
-            android:text="For inquiries and support, please contact us at support@sugarsync.com."
-            android:textSize="16sp" />
+            android:layout_height="300dp"
+            android:layout_marginTop="10dp" />
+</LinearLayout>
 
-    </RelativeLayout>
+</androidx.core.widget.NestedScrollView>
 
-</ScrollView>
+
+
+
+
+
+
+
+
+
 
 
 

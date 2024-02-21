@@ -60,6 +60,24 @@
         android:layout_height="wrap_content"
         android:hint="Enter dinner" />
 
+    <!-- Progress Bar to Track Sugar Intake -->
+    <ProgressBar
+        android:id="@+id/progressBarSugar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:max="30"
+    android:progress="0" />
+
+    <TextView
+        android:id="@+id/textProgressFraction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0/30"
+        android:layout_gravity="end" />
+
+
     <!-- Submit Button -->
     <Button
         android:id="@+id/buttonSubmit"

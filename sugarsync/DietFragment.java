@@ -1,6 +1,8 @@
 package com.example.sugarsync;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,6 +20,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -52,6 +56,12 @@ public class DietFragment extends Fragment {
 
     //private RecyclerView recyclerView;
 
+    private View view;
+
+    private ProgressBar progressBarSugar;
+
+    private TextView textProgressFraction;
+
     private EdamamApiService edamamApiService;
 
     public DietFragment() {
@@ -70,6 +80,8 @@ public class DietFragment extends Fragment {
         editTextDinner = view.findViewById(R.id.editTextDinner);
         buttonSubmit = view.findViewById(R.id.buttonSubmit);
         //recyclerView = view.findViewById(R.id.recyclerView);
+        progressBarSugar = view.findViewById(R.id.progressBarSugar);
+        textProgressFraction = view.findViewById(R.id.textProgressFraction);
 
         //RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
 
@@ -96,10 +108,14 @@ public class DietFragment extends Fragment {
         btnGetNutritionalInfo = view.findViewById(R.id.btnGetNutritionalInfo);
         btnGetNutritionalInfo.setOnClickListener(v -> getNutritionalInfo());
 
+
+
         return view;
 
 
     }
+
+
 
     private void getNutritionalInfo() {
         // Get the diet data from EditText fields
@@ -243,6 +259,44 @@ public class DietFragment extends Fragment {
         String lunch = editTextLunch.getText().toString();
         String dinner = editTextDinner.getText().toString();
 
+        // Make an API request to get nutritional info for all meals
+        String ingredients = breakfast + "," + lunch + "," + dinner;
+        Call<NutritionResponse> call = edamamApiService.getNutritionalInfo(
+                "49a44627", // app_id
+                "d970edb6ec195faa3fe67460ed7b1010", // replace with your app key
+                ingredients
+        );
+
+        call.enqueue(new Callback<NutritionResponse>() {
+            @Override
+            public void onResponse(Call<NutritionResponse> call, Response<NutritionResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    // Get sugar content
+                    double sugar = response.body().getTotalNutrients().getSugar().getQuantity();
+                    // Save the diet data to Firebase along with sugar content
+                    saveDietDataToFirebase(userId, currentDate, breakfast, lunch, dinner, sugar);
+                } else {
+                    // Log the error response
+                    Log.e("API_RESPONSE_ERROR", response.toString());
+
+                    // Handle API error
+                    Toast.makeText(requireContext(), "Error fetching nutritional information", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NutritionResponse> call, Throwable t) {
+                // Log the failure details
+                Log.e("API_REQUEST_FAILURE", "Failed to make API request", t);
+
+                // Handle network or request failure
+                Toast.makeText(requireContext(), "Failed to fetch nutritional information", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    private void saveDietDataToFirebase(String userId, String currentDate, String breakfast, String lunch, String dinner, double sugar) {
         // Create a reference to the "users" node in Firebase
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
 
@@ -260,6 +314,7 @@ public class DietFragment extends Fragment {
         dietRef.child("breakfast").setValue(breakfast);
         dietRef.child("lunch").setValue(lunch);
         dietRef.child("dinner").setValue(dinner);
+        dietRef.child("sugar").setValue(sugar);
 
         // Clear the input fields
         editTextBreakfast.setText("");
@@ -268,7 +323,19 @@ public class DietFragment extends Fragment {
 
         // Display a toast message
         Toast.makeText(requireContext(), "Diet is saved", Toast.LENGTH_SHORT).show();
+
+
+
+
+        // Update the progress bar to reflect the sugar intake
+        progressBarSugar.setProgress((int) sugar);
+        textProgressFraction.setText(sugar + "/30g");
+
+
     }
+
+
+
 
 
     // Method to get the current date in a formatted string

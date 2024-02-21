@@ -195,6 +195,8 @@ public class ViewAllExerciseActivity extends AppCompatActivity implements Exerci
 
                 exerciseAdapter.notifyDataSetChanged();
 
+                recyclerView.post(() -> recyclerView.smoothScrollToPosition(exerciseAdapter.getItemCount() - 1));
+
 
             }
 

@@ -14,12 +14,22 @@
         android:textStyle="bold"
         android:padding="16dp" />
 
+    <SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/titleTextView"
+        android:queryHint="Search Exercises..."
+        android:iconifiedByDefault="false"
+        android:layout_margin="2dp"/>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/titleTextView"
-        android:padding="16dp"/>
+        android:layout_below="@id/searchView"
+    android:padding="16dp"/>
 
 </RelativeLayout>
 

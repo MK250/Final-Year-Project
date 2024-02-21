@@ -1,4 +1,3 @@
-<!-- fragment_profile.xml -->
 
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -14,9 +13,9 @@
         android:layout_height="wrap_content"
         android:text="Profile"
         android:textSize="36sp"
-    android:textStyle="bold"
-    android:layout_marginTop="16dp"
-    android:layout_centerHorizontal="true"/>
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true"/>
 
     <!-- Profile Picture -->
     <ImageView
@@ -38,8 +37,8 @@
         android:layout_marginTop="32dp"
         android:layout_toEndOf="@id/profilePicture"
         android:layout_marginStart="16dp"
-        android:textSize="20sp"
-    />
+        android:textSize="18sp"
+        />
 
     <!-- Diabetes Type TextView -->
     <TextView
@@ -51,8 +50,8 @@
         android:layout_marginTop="32dp"
         android:layout_toEndOf="@id/profilePicture"
         android:layout_marginStart="16dp"
-        android:textSize="20sp"
-    />
+        android:textSize="18sp"
+        />
 
     <!-- Insulin Therapy TextView -->
     <TextView
@@ -64,8 +63,8 @@
         android:layout_marginTop="32dp"
         android:layout_toEndOf="@id/profilePicture"
         android:layout_marginStart="16dp"
-        android:textSize="20sp"
-    />
+        android:textSize="18sp"
+        />
 
     <!-- Pills TextView -->
     <TextView
@@ -77,8 +76,8 @@
         android:layout_marginTop="32dp"
         android:layout_toEndOf="@id/profilePicture"
         android:layout_marginStart="16dp"
-        android:textSize="20sp"
-    />
+        android:textSize="18sp"
+        />
 
     <!-- Units TextView -->
     <TextView
@@ -90,8 +89,8 @@
         android:layout_marginTop="32dp"
         android:layout_toEndOf="@id/profilePicture"
         android:layout_marginStart="16dp"
-        android:textSize="20sp"
-    />
+        android:textSize="18sp"
+        />
 
     <!-- Target Range TextView -->
     <TextView
@@ -103,8 +102,18 @@
         android:layout_marginTop="32dp"
         android:layout_toEndOf="@id/profilePicture"
         android:layout_marginStart="16dp"
-        android:textSize="20sp"
-    />
+        android:textSize="18sp"
+        />
+
+    <ImageView
+        android:id="@+id/editIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/round_edit_24"
+    android:layout_marginTop="16dp"
+    android:layout_marginRight="16dp"
+    android:layout_alignParentEnd="true"
+    android:layout_below="@id/profileTitle"/>
 
     <!-- "Log Off" Button -->
     <Button
@@ -117,3 +126,4 @@
         android:layout_marginBottom="16dp" />
 
 </RelativeLayout>
+

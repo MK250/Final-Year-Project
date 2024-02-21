@@ -71,6 +71,9 @@ public class ViewAllGlucoseActivity extends AppCompatActivity {
                     // Initialize and set up the adapter
                     glucoseAdapter = new GlucoseAdapter(glucoseEntries);
                     recyclerView.setAdapter(glucoseAdapter);
+
+                    recyclerView.post(() -> recyclerView.smoothScrollToPosition(glucoseAdapter.getItemCount() - 1));
+
                 }
 
                 @Override

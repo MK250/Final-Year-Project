@@ -6,11 +6,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/gradient_background"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
     android:gravity="center">
 
-
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_logo_foreground"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="16dp" />
 
     <TextView
         android:id="@+id/logintextView"
@@ -18,9 +26,11 @@
         android:layout_height="wrap_content"
         android:text="Login"
         android:textSize="24sp"
+        android:textStyle="bold"
         android:layout_gravity="center"
         android:layout_marginTop="105dp"
         android:layout_marginBottom="8dp" />
+
 
     <TextView
         android:id="@+id/usernameTextView"
@@ -34,8 +44,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/text_hint1"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp" />
+        android:background="@drawable/edit_text_border"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp" />
 
     <TextView
         android:id="@+id/passwordTextView"
@@ -50,8 +61,10 @@
         android:layout_height="wrap_content"
         android:hint="@string/text_hint2"
         android:inputType="textPassword"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp" />
+        android:background="@drawable/edit_text_border"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp" />
+
 
     <Button
         android:id="@+id/submit"
