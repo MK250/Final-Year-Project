@@ -58,30 +58,227 @@ public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
     private BarChart barChart;
 
+    private BarChart barChartSugarIntake;
+
+    private BarChart barChartBloodGlucose;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         barChart = view.findViewById(R.id.barChartExercise);
         retrieveExerciseData();
+        barChartSugarIntake = view.findViewById(R.id.barChartSugarIntake);
+        retrieveSugarIntakeData();
+
+        barChartBloodGlucose = view.findViewById(R.id.barChartBloodGlucose);
+        retrieveBloodGlucoseData();
         return view;
     }
 
-    private void retrieveExerciseData() {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users");
 
-        // Calculate the timestamp for 7 days ago
-        Calendar sevenDaysAgoCalendar = Calendar.getInstance();
-        sevenDaysAgoCalendar.add(Calendar.DAY_OF_YEAR, -7);
-        long sevenDaysAgoTimestamp = sevenDaysAgoCalendar.getTimeInMillis();
+    private void retrieveBloodGlucoseData() {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
+                    .child("users")
+                    .child(userId)
+                    .child("glucoseLevels");
+
+            // Calculate the timestamp for 7 days ago
+            Calendar sevenDaysAgoCalendar = Calendar.getInstance();
+            sevenDaysAgoCalendar.add(Calendar.DAY_OF_YEAR, -7);
+            long sevenDaysAgoTimestamp = sevenDaysAgoCalendar.getTimeInMillis();
+
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Map<String, Float> bloodGlucoseMap = new HashMap<>();
+
+                    for (DataSnapshot glucoseSnapshot : dataSnapshot.getChildren()) {
+                        String timestamp = glucoseSnapshot.getKey();
+                        String date = getDateFromTimestamp(timestamp);
+
+                        // Convert timestamp to long
+                        long glucoseTimestamp = Long.parseLong(timestamp);
+
+                        // Check if the date is within the last 7 days
+                        if (glucoseTimestamp >= sevenDaysAgoTimestamp) {
+                            String glucoseLevelString = glucoseSnapshot.getValue(String.class);
+
+                            // Convert glucose level from string to float
+                            if (glucoseLevelString != null) {
+                                try {
+                                    Float glucoseLevel = Float.parseFloat(glucoseLevelString);
+
+                                    // Aggregate glucose level values for each date
+                                    if (date != null) {
+                                        if (bloodGlucoseMap.containsKey(date)) {
+                                            bloodGlucoseMap.put(date, bloodGlucoseMap.get(date) + glucoseLevel);
+                                        } else {
+                                            bloodGlucoseMap.put(date, glucoseLevel);
+                                        }
+                                    }
+                                } catch (NumberFormatException e) {
+                                    // Handle parsing error if glucose level cannot be parsed to float
+                                    Log.e(TAG, "Error parsing glucose level: " + glucoseLevelString);
+                                }
+                            }
+                        }
+                    }
+
+                    // Convert map to lists for chart display
+                    List<String> dates = new ArrayList<>(bloodGlucoseMap.keySet());
+                    List<Float> glucoseLevels = new ArrayList<>(bloodGlucoseMap.values());
+
+                    displayBloodGlucoseColumnChart(glucoseLevels, dates);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Toast.makeText(getActivity(), "Database Error", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+
+    private String getDateFromTimestamp(String timestamp) {
+        try {
+            long tsLong = Long.parseLong(timestamp);
+            Date date = new Date(tsLong);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            return sdf.format(date);
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "Error parsing timestamp: " + timestamp);
+            return null; // Return null if there's an error parsing the timestamp
+        }
+    }
+
+
+    private void displayBloodGlucoseColumnChart(List<Float> glucoseLevels, List<String> dates) {
+        ArrayList<BarEntry> entries = new ArrayList<>();
+        for (int i = 0; i < glucoseLevels.size(); i++) {
+            entries.add(new BarEntry(i, glucoseLevels.get(i)));
+        }
+
+        BarDataSet barDataSet = new BarDataSet(entries, "Blood Glucose Levels");
+        ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+        dataSets.add(barDataSet);
+        BarData data = new BarData(dataSets);
+
+        barChartBloodGlucose.setData(data);
+        barChartBloodGlucose.setFitBars(true); // make the bars fit the viewport width
+        barChartBloodGlucose.invalidate();
+
+        Description description = new Description();
+        description.setText("Blood Glucose Levels");
+        barChartBloodGlucose.setDescription(description);
+
+        XAxis xAxis = barChartBloodGlucose.getXAxis();
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(dates));
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1);
+        xAxis.setLabelRotationAngle(0); // Rotate labels for better visibility
+        xAxis.setLabelCount(dates.size()); // Set label count to match the number of dates
+
+        xAxis.setTextSize(12f);
+
+        barChartBloodGlucose.animateY(2000); // animate the chart vertically
+    }
+
+
+    private void retrieveSugarIntakeData() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            // User not logged in, handle accordingly
+            return;
+        }
+
+        String userId = currentUser.getUid();
+        DatabaseReference userDietRef = FirebaseDatabase.getInstance().getReference("users")
+                .child(userId).child("diets");
+
+        userDietRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<Float> exerciseTimes = new ArrayList<>();
-                List<String> dates = new ArrayList<>();
-                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                    for (DataSnapshot exerciseSnapshot : userSnapshot.child("exercise").getChildren()) {
+                Map<String, Double> sugarIntakeMap = new HashMap<>();
+
+                // Calculate the timestamp for 7 days ago
+                Calendar sevenDaysAgoCalendar = Calendar.getInstance();
+                sevenDaysAgoCalendar.add(Calendar.DAY_OF_YEAR, -7);
+                long sevenDaysAgoTimestamp = sevenDaysAgoCalendar.getTimeInMillis();
+
+                for (DataSnapshot dietSnapshot : dataSnapshot.getChildren()) {
+                    String date = dietSnapshot.child("date").getValue(String.class);
+                    Double sugarIntake = dietSnapshot.child("sugar").getValue(Double.class);
+
+                    if (date != null && sugarIntake != null) {
+                        try {
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                            Date currentDate = sdf.parse(date);
+                            if (currentDate != null && currentDate.getTime() >= sevenDaysAgoTimestamp) {
+                                // Aggregate sugar intake values for each date
+
+                                // Aggregate sugar intake values for each date
+                                if (sugarIntakeMap.containsKey(date)) {
+                                    sugarIntakeMap.put(date, sugarIntakeMap.get(date) + sugarIntake);
+                                } else {
+                                    sugarIntakeMap.put(date, sugarIntake);
+                                }
+
+
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                // Convert map to lists for chart display
+                List<String> dates = new ArrayList<>(sugarIntakeMap.keySet());
+                List<Double> sugarIntakeValues = new ArrayList<>(sugarIntakeMap.values());
+
+                displaySugarIntakeColumnChart(sugarIntakeValues, dates);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getActivity(), "Database Error", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+
+
+    private void retrieveExerciseData() {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
+                    .child("users")
+                    .child(userId)
+                    .child("exercise");
+
+            // Calculate the timestamp for 7 days ago
+            Calendar sevenDaysAgoCalendar = Calendar.getInstance();
+            sevenDaysAgoCalendar.add(Calendar.DAY_OF_YEAR, -7);
+            long sevenDaysAgoTimestamp = sevenDaysAgoCalendar.getTimeInMillis();
+
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    List<Float> exerciseTimes = new ArrayList<>();
+                    List<String> dates = new ArrayList<>();
+                    for (DataSnapshot exerciseSnapshot : dataSnapshot.getChildren()) {
                         if (exerciseSnapshot.child("date").exists() &&
                                 exerciseSnapshot.child("exerciseTime").exists()) {
                             String date = exerciseSnapshot.child("date").getValue(String.class);
@@ -96,18 +293,55 @@ public class HomeFragment extends Fragment {
                             }
                         }
                     }
+                    displayColumnChart(exerciseTimes, dates);
                 }
-                displayColumnChart(exerciseTimes, dates);
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(getActivity(), "Database Error", Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Toast.makeText(getActivity(), "Database Error", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
 
+    private void displaySugarIntakeColumnChart(List<Double> sugarIntakeValues, List<String> dates) {
+        // Check if either list is empty
+        if (sugarIntakeValues.isEmpty() || dates.isEmpty() || sugarIntakeValues.size() != dates.size()) {
+            // Handle empty or mismatched data
+            // For example, you can display a message or hide the chart
+            return;
+        }
+
+        ArrayList<BarEntry> entries = new ArrayList<>();
+        for (int i = 0; i < sugarIntakeValues.size(); i++) {
+            entries.add(new BarEntry(i, sugarIntakeValues.get(i).floatValue())); // Convert to float
+        }
+
+        BarDataSet barDataSet = new BarDataSet(entries, "Sugar Intake");
+        ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+        dataSets.add(barDataSet);
+        BarData data = new BarData(dataSets);
+
+        barChartSugarIntake.setData(data);
+        barChartSugarIntake.setFitBars(true); // make the bars fit the viewport width
+        barChartSugarIntake.invalidate();
+
+        Description description = new Description();
+        description.setText("Sugar Intake for Last 7 Days");
+        barChartSugarIntake.setDescription(description);
+
+        XAxis xAxis = barChartSugarIntake.getXAxis();
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(dates));
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1);
+        xAxis.setLabelRotationAngle(20);  // Rotate labels for better visibility
+        xAxis.setLabelCount(dates.size()); // Set label count to match the number of dates
+
+        xAxis.setTextSize(5f);
+
+        barChartSugarIntake.animateY(2000); // animate the chart vertically
+    }
 
     private long getDayFromDate(String dateString) {
         try {
@@ -151,8 +385,10 @@ public class HomeFragment extends Fragment {
         xAxis.setValueFormatter(new IndexAxisValueFormatter(dates));
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularity(1);
-        xAxis.setLabelRotationAngle(45); // Rotate labels for better visibility
+        xAxis.setLabelRotationAngle(0);  // Rotate labels for better visibility
         xAxis.setLabelCount(dates.size()); // Set label count to match the number of dates
+
+        xAxis.setTextSize(12f);
 
         barChart.animateY(2000); // animate the chart vertically
     }

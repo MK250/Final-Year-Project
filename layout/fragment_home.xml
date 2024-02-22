@@ -22,27 +22,38 @@
         android:layout_marginTop="40dp"/>
 
     <!-- Blood Level Progress -->
-    <TextView
-        android:id="@+id/textBloodLevelTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Blood Level"
-        android:textSize="18sp"
-        android:textColor="#0E0E0E"
-        android:layout_marginTop="20dp"
-        android:layout_centerHorizontal="true"/>
-    <ProgressBar
-        android:id="@+id/progressBloodLevel"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:max="100"
-        android:progress="70"
-        android:progressDrawable="@drawable/round_progress_blood_level"
-        android:layout_marginTop="10dp"
-        android:layout_centerHorizontal="true" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="20dp">
 
-    <!-- Sugar Intake and Exercise Time -->
+            <TextView
+                android:id="@+id/textBloodLevelTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Blood Level"
+                android:textSize="18sp"
+                android:textColor="#0E0E0E"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center_horizontal" />
+
+            <ProgressBar
+                android:id="@+id/progressBloodLevel"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:max="100"
+                android:progress="70"
+                android:progressDrawable="@drawable/round_progress_blood_level"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center" />
+        </LinearLayout>
+
+
+
+        <!-- Sugar Intake and Exercise Time -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -119,7 +130,7 @@
 
         <!-- Sugar Intake BarChart Title -->
         <TextView
-            android:id="@+id/textSugarIntakeTitle"
+            android:id="@+id/textSugarIntakeTitle1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Sugar Intake"
