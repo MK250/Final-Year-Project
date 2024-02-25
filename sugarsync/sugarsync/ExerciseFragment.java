@@ -143,7 +143,7 @@ public class ExerciseFragment extends Fragment {
             progressBar.setProgress(progress);
         }
 
-        String progressText = progress + "/130";
+        String progressText = progress + "/130 min";
         textProgressFraction.setText(progressText);
     }
 

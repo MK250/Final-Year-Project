@@ -1,6 +1,8 @@
 package com.example.sugarsync;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,6 +20,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -52,6 +56,12 @@ public class DietFragment extends Fragment {
 
     //private RecyclerView recyclerView;
 
+    private View view;
+
+    private ProgressBar progressBarSugar;
+
+    private TextView textProgressFraction;
+
     private EdamamApiService edamamApiService;
 
     public DietFragment() {
@@ -70,6 +80,8 @@ public class DietFragment extends Fragment {
         editTextDinner = view.findViewById(R.id.editTextDinner);
         buttonSubmit = view.findViewById(R.id.buttonSubmit);
         //recyclerView = view.findViewById(R.id.recyclerView);
+        progressBarSugar = view.findViewById(R.id.progressBarSugar);
+        textProgressFraction = view.findViewById(R.id.textProgressFraction);
 
         //RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
 
@@ -96,10 +108,14 @@ public class DietFragment extends Fragment {
         btnGetNutritionalInfo = view.findViewById(R.id.btnGetNutritionalInfo);
         btnGetNutritionalInfo.setOnClickListener(v -> getNutritionalInfo());
 
+
+
         return view;
 
 
     }
+
+
 
     private void getNutritionalInfo() {
         // Get the diet data from EditText fields
@@ -307,7 +323,18 @@ public class DietFragment extends Fragment {
 
         // Display a toast message
         Toast.makeText(requireContext(), "Diet is saved", Toast.LENGTH_SHORT).show();
+
+
+
+
+        // Update the progress bar to reflect the sugar intake
+        progressBarSugar.setProgress((int) sugar);
+        textProgressFraction.setText(sugar + "/30g");
+
+
     }
+
+
 
 
 

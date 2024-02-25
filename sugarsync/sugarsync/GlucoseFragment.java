@@ -117,6 +117,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -158,7 +159,6 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
 
         Button bAddManually = view.findViewById(R.id.bAddManually);
         bAddManually.setOnClickListener(v -> showManualEntryDialog());
-
 
 
         bCapture.setOnClickListener(v -> {
@@ -245,7 +245,6 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
     }
 
 
-
     private long convertDateTimeToTimestamp(String date, String time) {
         try {
             String dateTimeString = date + " " + time;
@@ -281,10 +280,6 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
     }
 
 
-
-
-
-
     private void pushManualEntryToFirebase(String glucoseLevel, long timestamp) {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
@@ -307,7 +302,7 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
             glucoseEntries.add(new Entry(timestamp, Float.parseFloat(glucoseLevel)));
 
             // Update LineChart with new data
-         //   updateLineChartWithData();
+            //   updateLineChartWithData();
 
             Toast.makeText(requireContext(), "Data saved successfully", Toast.LENGTH_SHORT).show();
 
@@ -318,8 +313,6 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
             Toast.makeText(requireContext(), "User not authenticated", Toast.LENGTH_SHORT).show();
         }
     }
-
-
 
 
     private void fetchUserGlucoseData() {
@@ -440,7 +433,6 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
         lineChart.notifyDataSetChanged();
         lineChart.invalidate();
     }
-
 
 
     private int findEntryIndex(float value) {
@@ -650,76 +642,114 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
 
             float glucoseValue = Float.parseFloat(glucoseLevel);
             if (glucoseValue > 6.0) {
-                // If glucose level is more than 6.0, check exercise time
+                // If glucose level is more than 6.0, check sugar intake for the past 24 hours
+                DatabaseReference dietRef = userRef.child("diet");
                 DatabaseReference exerciseRef = userRef.child("exercise");
 
-                exerciseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                final double[] totalSugarIntake = {0};
+                final int[] totalExerciseTime = {0};
+
+                // Get the current time and time 24 hours ago
+                long currentTimeMillis = System.currentTimeMillis();
+                long twentyFourHoursAgo = currentTimeMillis - (24 * 60 * 60 * 1000); // 24 hours ago
+
+                dietRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        long currentTimeMillis = System.currentTimeMillis();
-                        int totalExerciseTime = 0;
-                        for (DataSnapshot exerciseSnapshot : snapshot.getChildren()) {
-                            // Extract exercise data
-                            String exerciseId = exerciseSnapshot.getKey();
-                            Double exerciseTime = exerciseSnapshot.child("exerciseTime").getValue(Double.class);
-                            String exerciseType = exerciseSnapshot.child("exerciseType").getValue(String.class);
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Log.d("Firebase", "Fetched diet entries from Firebase: " + dataSnapshot.getChildrenCount());
 
-// Calculate total exercise time
-                            totalExerciseTime += exerciseTime != null ? exerciseTime.intValue() : 0; // Convert Double to int
-
-
-                            // Calculate total exercise time
-
-
-                            Log.d("Exercise", "Total exercise time in the past 24 hours: " + totalExerciseTime);
+                        // Iterate through diet entries to calculate total sugar intake
+                        for (DataSnapshot dietSnapshot : dataSnapshot.getChildren()) {
+                            // Iterate through meals in each diet entry
+                            for (DataSnapshot mealSnapshot : dietSnapshot.getChildren()) {
+                                // Check if the meal has a sugar field
+                                if (mealSnapshot.hasChild("sugar")) {
+                                    // Get the sugar amount for this meal
+                                    Double sugarAmount = mealSnapshot.child("sugar").getValue(Double.class);
+                                    // Check if sugarAmount is not null and greater than 0
+                                    if (sugarAmount != null && sugarAmount > 0) {
+                                        // Add sugarAmount to total sugar intake
+                                        totalSugarIntake[0] += sugarAmount;
+                                    }
+                                    Log.d("Firebase", "Sugar Amount for this entry: " + sugarAmount);
+                                }
+                            }
                         }
+                        Log.d("Firebase", "Total Sugar Intake: " + totalSugarIntake[0]); // Log total sugar intake
 
-                        // Check if total exercise time is less than 130 minutes in the past 24 hours
-                        // Check if total exercise time is less than 130 minutes in the past 24 hours
-                        if (totalExerciseTime < 130) {
-                            // Notify user about insufficient exercise
-                            Log.d("Exercise", "Showing exercise alert");
-                            showExerciseAlert();
-                        } else {
-                            // Notify user about sufficient exercise
-                            Log.d("Exercise", "Sufficient exercise being done.");
-                            Toast.makeText(requireContext(), "Well done - exercise being done", Toast.LENGTH_SHORT).show();
-                        }
+                        // Fetch exercise data
+                        exerciseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                Log.d("Firebase", "Fetched exercise entries from Firebase: " + snapshot.getChildrenCount());
 
+                                // Iterate through exercise entries to calculate total exercise time
+                                for (DataSnapshot exerciseSnapshot : snapshot.getChildren()) {
+                                    Double exerciseTime = exerciseSnapshot.child("exerciseTime").getValue(Double.class);
+                                    if (exerciseTime != null) {
+                                        totalExerciseTime[0] += exerciseTime.intValue();
+                                    }
+                                }
+                                Log.d("Firebase", "Total Exercise Time: " + totalExerciseTime[0]); // Log total exercise time
+
+                                // Display the alert dialog with exercise and sugar intake information
+                                showExerciseAndSugarAlert(totalExerciseTime[0], totalSugarIntake[0]);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Log.e("Firebase", "Error fetching exercise data: " + error.getMessage());
+                            }
+                        });
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("Firebase", "Error fetching exercise data: " + error.getMessage());
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.e("Firebase", "Error fetching diet data: " + databaseError.getMessage());
                     }
                 });
+            } else if (glucoseValue < 3.0) {
+                // If glucose level is less than 3.0, notify the user about dangerously low sugar level
+                showLowSugarLevelAlert();
             }
 
-            // Update LineChart with new data
+
+// Update LineChart with new data
             glucoseEntries.add(new Entry(glucoseEntries.size(), Float.parseFloat(glucoseLevel)));
             updateLineChartWithData();
         } else {
-            // Handle the case where the user is not authenticated
+// Handle the case where the user is not authenticated
             Toast.makeText(requireContext(), "User not authenticated", Toast.LENGTH_SHORT).show();
         }
-    }
 
+}
 
-
-    private void showExerciseAlert() {
+    private void showLowSugarLevelAlert() {
         try {
             AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-            builder.setTitle("Insufficient Exercise")
-                    .setMessage("Your glucose level is above 6.0 and you haven't exercised enough in the past 24 hours.")
+            builder.setTitle("Low Sugar Level")
+                    .setMessage("Your glucose level is dangerously low. Please go to the hospital immediately.")
                     .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
                     .show();
-            Log.d("AlertDialog", "Exercise alert dialog shown successfully.");
+            Log.d("AlertDialog", "Low sugar level alert dialog shown successfully.");
         } catch (Exception e) {
-            Log.e("AlertDialog", "Error showing exercise alert dialog: " + e.getMessage());
+            Log.e("AlertDialog", "Error showing low sugar level alert dialog: " + e.getMessage());
         }
     }
 
 
+        private void showExerciseAndSugarAlert(int totalExerciseTime, double totalSugarIntake) {
+        try {
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            builder.setTitle("Insufficient Exercise and High Sugar Intake")
+                    .setMessage("Your glucose level is above 6.0, your total sugar intake has exceeded 30g "  + " grams, and your total exercise time is " + totalExerciseTime + " minutes.")
+                    .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
+                    .show();
+            Log.d("AlertDialog", "Exercise and sugar intake alert dialog shown successfully.");
+        } catch (Exception e) {
+            Log.e("AlertDialog", "Error showing exercise and sugar intake alert dialog: " + e.getMessage());
+        }
+    }
 
 
 }
