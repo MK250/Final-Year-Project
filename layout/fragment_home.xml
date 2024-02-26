@@ -21,7 +21,10 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="40dp"/>
 
-    <!-- Blood Level Progress -->
+
+
+
+        <!-- Blood Level Progress -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,11 +47,12 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:max="100"
-                android:progress="70"
-                android:progressDrawable="@drawable/round_progress_blood_level"
-                android:layout_marginTop="10dp"
-                android:layout_gravity="center" />
+                android:max="180"
+            android:progress="70"
+            android:progressDrawable="@drawable/round_progress_blood_level"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center" />
+
         </LinearLayout>
 
 
@@ -78,7 +82,7 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:max="100"
+                android:max="210"
                 android:progress="50"
                 android:progressDrawable="@drawable/round_progress_sugar_intake"
                 android:layout_marginTop="10dp"/>
@@ -102,7 +106,7 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:max="100"
+                android:max="150"
                 android:progress="30"
                 android:progressDrawable="@drawable/round_progress_exercise_time"
                 android:layout_marginTop="10dp"/>

@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+
+
 public class ViewAllGlucoseActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;

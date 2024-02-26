@@ -2,8 +2,13 @@ package com.example.sugarsync;
 
 import static android.content.ContentValues.TAG;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +16,17 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
@@ -44,6 +56,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,11 +77,19 @@ import java.util.Map;
 
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
+
+
+    private static final int STORAGE_PERMISSION_REQUEST_CODE = 100;
+
     private BarChart barChart;
 
     private BarChart barChartSugarIntake;
 
     private BarChart barChartBloodGlucose;
+
+    private float totalExerciseTime = 0;
+
+
 
     @Nullable
     @Override
@@ -73,6 +102,10 @@ public class HomeFragment extends Fragment {
 
         barChartBloodGlucose = view.findViewById(R.id.barChartBloodGlucose);
         retrieveBloodGlucoseData();
+
+
+
+
         return view;
     }
 
@@ -97,6 +130,7 @@ public class HomeFragment extends Fragment {
             databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    float totalGlucoseLevel = 0;
                     Map<String, Float> bloodGlucoseMap = new HashMap<>();
 
                     for (DataSnapshot glucoseSnapshot : dataSnapshot.getChildren()) {
@@ -123,6 +157,8 @@ public class HomeFragment extends Fragment {
                                             bloodGlucoseMap.put(date, glucoseLevel);
                                         }
                                     }
+
+                                    totalGlucoseLevel += glucoseLevel;
                                 } catch (NumberFormatException e) {
                                     // Handle parsing error if glucose level cannot be parsed to float
                                     Log.e(TAG, "Error parsing glucose level: " + glucoseLevelString);
@@ -130,7 +166,7 @@ public class HomeFragment extends Fragment {
                             }
                         }
                     }
-
+                    updateGlucoseLevelProgressBar(totalGlucoseLevel);
                     // Convert map to lists for chart display
                     List<String> dates = new ArrayList<>(bloodGlucoseMap.keySet());
                     List<Float> glucoseLevels = new ArrayList<>(bloodGlucoseMap.values());
@@ -144,6 +180,14 @@ public class HomeFragment extends Fragment {
                 }
             });
         }
+    }
+
+    private void updateGlucoseLevelProgressBar(float totalGlucoseLevel) {
+        ProgressBar progressBar = getView().findViewById(R.id.progressBloodLevel);
+        // Assuming the max value for progress bar is 180 (adjust accordingly if different)
+        int maxProgress = 180;
+        int progress = (int) totalGlucoseLevel;
+        progressBar.setProgress(progress);
     }
 
 
@@ -206,6 +250,7 @@ public class HomeFragment extends Fragment {
         userDietRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                double totalSugarIntake = 0;
                 Map<String, Double> sugarIntakeMap = new HashMap<>();
 
                 // Calculate the timestamp for 7 days ago
@@ -229,15 +274,17 @@ public class HomeFragment extends Fragment {
                                     sugarIntakeMap.put(date, sugarIntakeMap.get(date) + sugarIntake);
                                 } else {
                                     sugarIntakeMap.put(date, sugarIntake);
+
                                 }
 
-
+                                totalSugarIntake += sugarIntake;
                             }
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
                     }
                 }
+                updateSugarIntakeProgressBar(totalSugarIntake);
 
                 // Convert map to lists for chart display
                 List<String> dates = new ArrayList<>(sugarIntakeMap.keySet());
@@ -254,7 +301,13 @@ public class HomeFragment extends Fragment {
     }
 
 
-
+    private void updateSugarIntakeProgressBar(double totalSugarIntake) {
+        ProgressBar progressBar = getView().findViewById(R.id.progressSugarIntake);
+        // Assuming the max value for progress bar is 210 (adjust accordingly if different)
+        int maxProgress = 210;
+        int progress = (int) totalSugarIntake;
+        progressBar.setProgress(progress);
+    }
 
     private void retrieveExerciseData() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -289,11 +342,13 @@ public class HomeFragment extends Fragment {
                                 if (day >= sevenDaysAgoTimestamp) {
                                     exerciseTimes.add(exerciseTime);
                                     dates.add(date);
+                                    totalExerciseTime += exerciseTime;
                                 }
                             }
                         }
                     }
                     displayColumnChart(exerciseTimes, dates);
+                    updateExerciseProgressBar(totalExerciseTime);
                 }
 
                 @Override
@@ -302,6 +357,14 @@ public class HomeFragment extends Fragment {
                 }
             });
         }
+    }
+
+    private void updateExerciseProgressBar(float totalExerciseTime) {
+        ProgressBar progressBar = getView().findViewById(R.id.progressExerciseTime);
+        // Assuming the max value for progress bar is 100 (adjust accordingly if different)
+        int maxProgress = 100;
+        int progress = (int) ((totalExerciseTime / 60) * maxProgress); // Convert exercise time to minutes
+        progressBar.setProgress(progress);
     }
 
 
@@ -388,7 +451,7 @@ public class HomeFragment extends Fragment {
         xAxis.setLabelRotationAngle(0);  // Rotate labels for better visibility
         xAxis.setLabelCount(dates.size()); // Set label count to match the number of dates
 
-        xAxis.setTextSize(12f);
+        xAxis.setTextSize(7f);
 
         barChart.animateY(2000); // animate the chart vertically
     }
