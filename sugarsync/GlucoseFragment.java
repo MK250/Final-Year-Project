@@ -10,6 +10,7 @@ import static androidx.fragment.app.FragmentManager.TAG;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
@@ -641,7 +642,10 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
             glucoseRef.setValue(glucoseLevel);
 
             float glucoseValue = Float.parseFloat(glucoseLevel);
-            if (glucoseValue > 6.0) {
+            if (glucoseValue > 8.0) {
+                // Display alert for high glucose level
+                showHighGlucoseAlert();
+            } else if (glucoseValue > 6.0) {
                 // If glucose level is more than 6.0, check sugar intake for the past 24 hours
                 DatabaseReference dietRef = userRef.child("diet");
                 DatabaseReference exerciseRef = userRef.child("exercise");
@@ -743,8 +747,24 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
         }
     }
 
+    private void showHighGlucoseAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("High Glucose Alert")
+                .setMessage("Your glucose level is above 8.0 mmol/L. Please consult with your healthcare provider.")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // Dismiss the dialog
+                        dialogInterface.dismiss();
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 
-        private void showExerciseAndSugarAlert(int totalExerciseTime, double totalSugarIntake) {
+
+
+    private void showExerciseAndSugarAlert(int totalExerciseTime, double totalSugarIntake) {
         try {
             AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
             builder.setTitle("Exercise and Sugar Intake")

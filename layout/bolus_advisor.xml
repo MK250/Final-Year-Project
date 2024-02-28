@@ -1,0 +1,52 @@
+<!-- activity_bolus_advisor.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/editTextGlucose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Blood Glucose Level (mg/dL)"
+        android:inputType="numberDecimal"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true"/>
+
+    <EditText
+        android:id="@+id/editTextCarbs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Carbohydrate Intake (g)"
+        android:inputType="numberDecimal"
+        android:layout_below="@id/editTextGlucose"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true"/>
+
+    <EditText
+        android:id="@+id/editTextISF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Insulin Sensitivity Factor (ISF)"
+        android:inputType="numberDecimal"
+        android:layout_below="@id/editTextCarbs"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true"/>
+
+    <Button
+        android:id="@+id/buttonCalculate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Calculate Bolus"
+        android:layout_below="@id/editTextISF"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonCalculate"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true"/>
+
+</RelativeLayout>

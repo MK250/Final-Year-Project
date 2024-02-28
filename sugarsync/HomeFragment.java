@@ -89,6 +89,8 @@ public class HomeFragment extends Fragment {
 
     private float totalExerciseTime = 0;
 
+    private Button buttonBolusAdvisor;
+
 
 
     @Nullable
@@ -102,6 +104,17 @@ public class HomeFragment extends Fragment {
 
         barChartBloodGlucose = view.findViewById(R.id.barChartBloodGlucose);
         retrieveBloodGlucoseData();
+
+        buttonBolusAdvisor = view.findViewById(R.id.buttonBolusAdvisor);
+
+        // Set click listener for the button
+        buttonBolusAdvisor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Open the BolusAdvisorActivity when the button is clicked
+                startActivity(new Intent(getActivity(), BolusAdvisorActivity.class));
+            }
+        });
 
 
 
