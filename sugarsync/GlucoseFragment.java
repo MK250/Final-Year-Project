@@ -692,8 +692,11 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
                                 }
                                 Log.d("Firebase", "Total Exercise Time: " + totalExerciseTime[0]); // Log total exercise time
 
-                                // Display the alert dialog with exercise and sugar intake information
-                                showExerciseAndSugarAlert(totalExerciseTime[0], totalSugarIntake[0]);
+                                // Check if total sugar intake exceeds 30g and total exercise time is less than 30 minutes
+                                if ( totalExerciseTime[0] < 30) {
+                                    // Display the alert dialog with exercise and sugar intake information
+                                    showExerciseAndSugarAlert(totalExerciseTime[0], totalSugarIntake[0]);
+                                }
                             }
 
                             @Override
@@ -711,12 +714,15 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
             } else if (glucoseValue < 3.0) {
                 // If glucose level is less than 3.0, notify the user about dangerously low sugar level
                 showLowSugarLevelAlert();
+            } else {
+                // Handle the case where the user is not authenticated
+                Toast.makeText(requireContext(), "User not authenticated", Toast.LENGTH_SHORT).show();
             }
-
 
 // Update LineChart with new data
             glucoseEntries.add(new Entry(glucoseEntries.size(), Float.parseFloat(glucoseLevel)));
             updateLineChartWithData();
+
         } else {
 // Handle the case where the user is not authenticated
             Toast.makeText(requireContext(), "User not authenticated", Toast.LENGTH_SHORT).show();
@@ -741,7 +747,7 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
         private void showExerciseAndSugarAlert(int totalExerciseTime, double totalSugarIntake) {
         try {
             AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-            builder.setTitle("Insufficient Exercise and High Sugar Intake")
+            builder.setTitle("Exercise and Sugar Intake")
                     .setMessage("Your glucose level is above 6.0, your total sugar intake has exceeded 30g "  + " grams, and your total exercise time is " + totalExerciseTime + " minutes.")
                     .setPositiveButton("OK", (dialog, which) -> dialog.dismiss())
                     .show();
