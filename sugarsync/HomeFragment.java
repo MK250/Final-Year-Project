@@ -19,6 +19,7 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,7 +33,9 @@ import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -91,7 +94,11 @@ public class HomeFragment extends Fragment {
 
     private Button buttonBolusAdvisor;
 
+    private TextView sugarIntakeTextView;
 
+    //private TextView textExerciseMinutes;
+
+    TextView textExerciseMinutes;
 
     @Nullable
     @Override
@@ -107,6 +114,22 @@ public class HomeFragment extends Fragment {
 
         buttonBolusAdvisor = view.findViewById(R.id.buttonBolusAdvisor);
 
+        // Fetch and display the latest glucose reading
+        TextView glucoseReadingTextView = view.findViewById(R.id.textGlucoseReading);
+        retrieveGlucoseReading(glucoseReadingTextView);
+
+        //sugarIntakeTextView = view.findViewById(R.id.textSugarReading);
+        TextView textSugarReading = view.findViewById(R.id.textSugarReading);
+        // Assuming sugarIntakeTextView is declared as a field in your fragment
+
+
+
+        retrieveLatestSugarIntake(textSugarReading);
+
+        TextView textExerciseMinutes = view.findViewById(R.id.textExerciseMinutes);
+        retrieveExerciseDataCircle(textExerciseMinutes);
+
+
         // Set click listener for the button
         buttonBolusAdvisor.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,11 +139,180 @@ public class HomeFragment extends Fragment {
             }
         });
 
-
+        TextView latestCheckTextView = view.findViewById(R.id.textLatestCheck);
+        retrieveLatestCheckTimestamp(latestCheckTextView);
 
 
         return view;
     }
+
+    private void retrieveExerciseDataCircle(TextView textExerciseMinutes) {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
+                    .child("users")
+                    .child(userId)
+                    //.child("diets")
+                    .child("exercise");
+
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        for (DataSnapshot exerciseSnapshot : dataSnapshot.getChildren()) {
+                            Double exerciseTime = exerciseSnapshot.child("exerciseTime").getValue(Double.class);
+                            if (exerciseTime != null) {
+                                String exerciseTimeStr = String.valueOf(exerciseTime);
+                                textExerciseMinutes.setText(exerciseTimeStr);
+                                break; // Only need to display the first exercise time
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.e(TAG, "Database Error: " + databaseError.getMessage());
+                }
+            });
+        }
+    }
+
+
+
+    private void retrieveLatestSugarIntake(TextView textSugarReading) {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
+                    .child("users")
+                    .child(userId)
+                    .child("diets");
+
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        for (DataSnapshot dietSnapshot : dataSnapshot.getChildren()) {
+                            Double sugarIntake = dietSnapshot.child("sugar").getValue(Double.class);
+                            if (sugarIntake != null) {
+                                textSugarReading.setText(String.valueOf(sugarIntake) + "g");
+                                break; // Display the sugar intake from the first diet entry
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.e(TAG, "Database Error: " + databaseError.getMessage());
+                }
+            });
+        }
+    }
+
+
+
+    private void retrieveGlucoseReading(TextView glucoseReadingTextView) {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
+                    .child("users")
+                    .child(userId)
+                    .child("glucoseLevels");
+
+            Query query = databaseReference
+                    .orderByKey()
+                    .limitToLast(1);
+
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        DataSnapshot latestSnapshot = dataSnapshot.getChildren().iterator().next();
+                        if (latestSnapshot != null) {
+                            String glucoseReading = latestSnapshot.getValue(String.class);
+                            if (glucoseReading != null) {
+                                glucoseReadingTextView.setText(glucoseReading);
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.e(TAG, "Database Error: " + databaseError.getMessage());
+                }
+            });
+        }
+    }
+
+
+
+    private void retrieveLatestCheckTimestamp(TextView latestCheckTextView) {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
+                    .child("users")
+                    .child(userId)
+                    .child("glucoseLevels");
+
+            // Create a query to order by key and limit to last 1
+            Query query = databaseReference.orderByKey().limitToLast(1);
+
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        // Get the latest child snapshot
+                        DataSnapshot latestSnapshot = dataSnapshot.getChildren().iterator().next();
+                        if (latestSnapshot != null) {
+                            String timestamp = latestSnapshot.getKey();
+                            if (timestamp != null) {
+                                String formattedTimestamp = getDateFromTimestamp1(timestamp);
+                                latestCheckTextView.setText("Latest Check: " + formattedTimestamp);
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.e(TAG, "Database Error: " + databaseError.getMessage());
+                }
+            });
+        }
+    }
+
+
+
+    private String getDateFromTimestamp1(String timestamp) {
+        try {
+            long tsLong = Long.parseLong(timestamp);
+            Date date = new Date(tsLong);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            return sdf.format(date);
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "Error parsing timestamp: " + timestamp);
+            return null; // Return null if there's an error parsing the timestamp
+        }
+    }
+
 
 
     private void retrieveBloodGlucoseData() {
@@ -179,7 +371,7 @@ public class HomeFragment extends Fragment {
                             }
                         }
                     }
-                    updateGlucoseLevelProgressBar(totalGlucoseLevel);
+                    //updateGlucoseLevelProgressBar(totalGlucoseLevel);
                     // Convert map to lists for chart display
                     List<String> dates = new ArrayList<>(bloodGlucoseMap.keySet());
                     List<Float> glucoseLevels = new ArrayList<>(bloodGlucoseMap.values());
@@ -195,13 +387,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void updateGlucoseLevelProgressBar(float totalGlucoseLevel) {
-        ProgressBar progressBar = getView().findViewById(R.id.progressBloodLevel);
-        // Assuming the max value for progress bar is 180 (adjust accordingly if different)
-        int maxProgress = 180;
-        int progress = (int) totalGlucoseLevel;
-        progressBar.setProgress(progress);
-    }
+
 
 
     private String getDateFromTimestamp(String timestamp) {
@@ -244,6 +430,16 @@ public class HomeFragment extends Fragment {
         xAxis.setLabelCount(dates.size()); // Set label count to match the number of dates
 
         xAxis.setTextSize(12f);
+
+        // Add a line at the value of 10.0
+        LimitLine limitLine = new LimitLine(11.2f, "Target"); // 10.0 is the target value
+        limitLine.setLineWidth(1f);
+        limitLine.setLineColor(Color.RED);
+        limitLine.setTextColor(Color.BLACK);
+        limitLine.setTextSize(10f);
+
+        YAxis leftAxis = barChartBloodGlucose.getAxisLeft();
+        leftAxis.addLimitLine(limitLine);
 
         barChartBloodGlucose.animateY(2000); // animate the chart vertically
     }
@@ -290,14 +486,14 @@ public class HomeFragment extends Fragment {
 
                                 }
 
-                                totalSugarIntake += sugarIntake;
+                                //totalSugarIntake += sugarIntake;
                             }
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
                     }
                 }
-                updateSugarIntakeProgressBar(totalSugarIntake);
+               // updateSugarIntakeProgressBar(totalSugarIntake);
 
                 // Convert map to lists for chart display
                 List<String> dates = new ArrayList<>(sugarIntakeMap.keySet());
@@ -314,13 +510,7 @@ public class HomeFragment extends Fragment {
     }
 
 
-    private void updateSugarIntakeProgressBar(double totalSugarIntake) {
-        ProgressBar progressBar = getView().findViewById(R.id.progressSugarIntake);
-        // Assuming the max value for progress bar is 210 (adjust accordingly if different)
-        int maxProgress = 210;
-        int progress = (int) totalSugarIntake;
-        progressBar.setProgress(progress);
-    }
+
 
     private void retrieveExerciseData() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -361,7 +551,7 @@ public class HomeFragment extends Fragment {
                         }
                     }
                     displayColumnChart(exerciseTimes, dates);
-                    updateExerciseProgressBar(totalExerciseTime);
+                    //updateExerciseProgressBar(totalExerciseTime);
                 }
 
                 @Override
@@ -372,13 +562,6 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void updateExerciseProgressBar(float totalExerciseTime) {
-        ProgressBar progressBar = getView().findViewById(R.id.progressExerciseTime);
-        // Assuming the max value for progress bar is 100 (adjust accordingly if different)
-        int maxProgress = 100;
-        int progress = (int) ((totalExerciseTime / 60) * maxProgress); // Convert exercise time to minutes
-        progressBar.setProgress(progress);
-    }
 
 
     private void displaySugarIntakeColumnChart(List<Double> sugarIntakeValues, List<String> dates) {
