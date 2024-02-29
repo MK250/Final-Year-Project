@@ -1,52 +1,111 @@
-<!-- activity_bolus_advisor.xml -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="16dp">
 
-    <EditText
-        android:id="@+id/editTextGlucose"
+    <!-- Blood Glucose Level -->
+    <TextView
+        android:id="@+id/textGlucose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Blood Glucose Level (mg/dL)"
-        android:inputType="numberDecimal"
+        android:text="Blood Glucose Level (mg/dL)"
+        android:textColor="#000000"
+        android:textSize="16sp"
         android:layout_marginTop="16dp"
         android:layout_centerHorizontal="true"/>
 
     <EditText
-        android:id="@+id/editTextCarbs"
+        android:id="@+id/editTextGlucose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter your blood glucose level"
+        android:inputType="numberDecimal"
+        android:layout_below="@id/textGlucose"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/edit_text_background"
+        android:padding="10dp"/>
+
+    <!-- Carbohydrate Intake -->
+    <TextView
+        android:id="@+id/textCarbs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Carbohydrate Intake (g)"
-        android:inputType="numberDecimal"
+        android:text="Carbohydrate Intake (g)"
+        android:textColor="#000000"
+        android:textSize="16sp"
         android:layout_below="@id/editTextGlucose"
         android:layout_marginTop="16dp"
         android:layout_centerHorizontal="true"/>
 
     <EditText
-        android:id="@+id/editTextISF"
+        android:id="@+id/editTextCarbs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter carbohydrate intake"
+        android:inputType="numberDecimal"
+        android:layout_below="@id/textCarbs"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/edit_text_background"
+        android:padding="10dp"/>
+
+    <!-- Insulin Sensitivity Factor (ISF) -->
+    <TextView
+        android:id="@+id/textISF"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Insulin Sensitivity Factor (ISF)"
-        android:inputType="numberDecimal"
+        android:text="Insulin Sensitivity Factor (ISF)"
+        android:textColor="#000000"
+        android:textSize="16sp"
         android:layout_below="@id/editTextCarbs"
         android:layout_marginTop="16dp"
         android:layout_centerHorizontal="true"/>
 
+    <EditText
+        android:id="@+id/editTextISF"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter your ISF value"
+        android:inputType="numberDecimal"
+        android:layout_below="@id/textISF"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/edit_text_background"
+        android:padding="10dp"/>
+
+    <!-- Calculate Bolus Button -->
     <Button
         android:id="@+id/buttonCalculate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/button_background"
         android:text="Calculate Bolus"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
         android:layout_below="@id/editTextISF"
-        android:layout_marginTop="16dp"
         android:layout_centerHorizontal="true"/>
 
+    <!-- Result Text View -->
     <TextView
         android:id="@+id/textViewResult"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:textSize="16sp"
         android:layout_below="@id/buttonCalculate"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:layout_centerHorizontal="true"/>
 
+    <!-- YouTube Player View -->
+    <LinearLayout
+        android:id="@+id/youtube_player_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewResult"
+        android:layout_marginTop="24dp"
+        android:orientation="vertical">
+
+        <!-- YouTube Player View will be added dynamically -->
+
+    </LinearLayout>
 </RelativeLayout>
+
