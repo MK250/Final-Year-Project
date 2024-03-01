@@ -431,14 +431,25 @@ public class HomeFragment extends Fragment {
 
         xAxis.setTextSize(12f);
 
-        // Add a line at the value of 10.0
-        LimitLine limitLine = new LimitLine(11.2f, "Target"); // 10.0 is the target value
+        float sum = 0;
+        for (float level : glucoseLevels) {
+            sum += level;
+        }
+        float averageGlucoseLevel = sum / glucoseLevels.size();
+
+        // Update the target value based on the average glucose level
+        float targetValue = averageGlucoseLevel * 2; // Example: Double the average value
+        String targetLabel = "Target: " + targetValue; // Optional: Customize the label
+
+        // Add a line at the updated target value
+        LimitLine limitLine = new LimitLine(targetValue, targetLabel);
         limitLine.setLineWidth(1f);
         limitLine.setLineColor(Color.RED);
         limitLine.setTextColor(Color.BLACK);
         limitLine.setTextSize(10f);
 
         YAxis leftAxis = barChartBloodGlucose.getAxisLeft();
+        leftAxis.removeAllLimitLines(); // Remove previous limit lines
         leftAxis.addLimitLine(limitLine);
 
         barChartBloodGlucose.animateY(2000); // animate the chart vertically
@@ -532,7 +543,7 @@ public class HomeFragment extends Fragment {
             databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    List<Float> exerciseTimes = new ArrayList<>();
+                    Map<Long, Float> exerciseTimesPerDay = new HashMap<>();
                     List<String> dates = new ArrayList<>();
                     for (DataSnapshot exerciseSnapshot : dataSnapshot.getChildren()) {
                         if (exerciseSnapshot.child("date").exists() &&
@@ -543,15 +554,19 @@ public class HomeFragment extends Fragment {
                                 long day = getDayFromDate(date);
                                 // Check if the date is within the last 7 days
                                 if (day >= sevenDaysAgoTimestamp) {
-                                    exerciseTimes.add(exerciseTime);
-                                    dates.add(date);
-                                    totalExerciseTime += exerciseTime;
+                                    // Aggregate exercise times for each day
+                                    if (exerciseTimesPerDay.containsKey(day)) {
+                                        exerciseTimesPerDay.put(day, exerciseTimesPerDay.get(day) + exerciseTime);
+                                    } else {
+                                        exerciseTimesPerDay.put(day, exerciseTime);
+                                        dates.add(date); // Add the date only once per day
+                                    }
                                 }
                             }
                         }
                     }
+                    List<Float> exerciseTimes = new ArrayList<>(exerciseTimesPerDay.values());
                     displayColumnChart(exerciseTimes, dates);
-                    //updateExerciseProgressBar(totalExerciseTime);
                 }
 
                 @Override
@@ -598,6 +613,17 @@ public class HomeFragment extends Fragment {
         xAxis.setLabelCount(dates.size()); // Set label count to match the number of dates
 
         xAxis.setTextSize(5f);
+
+        String targetLabel = "Target: 10";
+        LimitLine limitLine = new LimitLine(10f, targetLabel);
+        limitLine.setLineWidth(1f);
+        limitLine.setLineColor(Color.RED);
+        limitLine.setTextColor(Color.BLACK);
+        limitLine.setTextSize(10f);
+
+        YAxis leftAxis = barChartSugarIntake.getAxisLeft();
+        leftAxis.removeAllLimitLines(); // Remove previous limit lines
+        leftAxis.addLimitLine(limitLine);
 
         barChartSugarIntake.animateY(2000); // animate the chart vertically
     }
@@ -648,6 +674,19 @@ public class HomeFragment extends Fragment {
         xAxis.setLabelCount(dates.size()); // Set label count to match the number of dates
 
         xAxis.setTextSize(7f);
+
+        // Calculate the average exercise time
+        String targetLabel = "Target: 30";
+        LimitLine limitLine = new LimitLine(30f, targetLabel);
+        limitLine.setLineWidth(1f);
+        limitLine.setLineColor(Color.RED);
+        limitLine.setTextColor(Color.BLACK);
+        limitLine.setTextSize(10f);
+
+        YAxis leftAxis = barChartSugarIntake.getAxisLeft();
+        leftAxis.removeAllLimitLines(); // Remove previous limit lines
+        leftAxis.addLimitLine(limitLine);
+
 
         barChart.animateY(2000); // animate the chart vertically
     }
