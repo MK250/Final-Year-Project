@@ -156,19 +156,21 @@ public class HomeFragment extends Fragment {
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
                     .child("users")
                     .child(userId)
-                    //.child("diets")
                     .child("exercise");
 
-            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            // Query to get exercises ordered by timestamp in descending order
+            Query query = databaseReference.orderByChild("timestamp").limitToLast(1);
+
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot exerciseSnapshot : dataSnapshot.getChildren()) {
+                            // Assuming your exercise data contains a "timestamp" field
                             Double exerciseTime = exerciseSnapshot.child("exerciseTime").getValue(Double.class);
                             if (exerciseTime != null) {
                                 String exerciseTimeStr = String.valueOf(exerciseTime);
                                 textExerciseMinutes.setText(exerciseTimeStr);
-                                break; // Only need to display the first exercise time
                             }
                         }
                     }
@@ -182,8 +184,6 @@ public class HomeFragment extends Fragment {
         }
     }
 
-
-
     private void retrieveLatestSugarIntake(TextView textSugarReading) {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -196,15 +196,18 @@ public class HomeFragment extends Fragment {
                     .child(userId)
                     .child("diets");
 
-            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            // Query to get diets ordered by timestamp in descending order
+            Query query = databaseReference.orderByChild("timestamp").limitToLast(1);
+
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot dietSnapshot : dataSnapshot.getChildren()) {
+                            // Assuming your diet data contains a "sugar" field
                             Double sugarIntake = dietSnapshot.child("sugar").getValue(Double.class);
                             if (sugarIntake != null) {
                                 textSugarReading.setText(String.valueOf(sugarIntake) + "g");
-                                break; // Display the sugar intake from the first diet entry
                             }
                         }
                     }
@@ -614,6 +617,9 @@ public class HomeFragment extends Fragment {
 
         xAxis.setTextSize(5f);
 
+        barChartSugarIntake.getAxisLeft().setAxisMinimum(0); // Set minimum value to 0
+        barChartSugarIntake.getAxisLeft().setAxisMaximum(20);
+
         String targetLabel = "Target: 10";
         LimitLine limitLine = new LimitLine(10f, targetLabel);
         limitLine.setLineWidth(1f);
@@ -675,9 +681,12 @@ public class HomeFragment extends Fragment {
 
         xAxis.setTextSize(7f);
 
+        barChartSugarIntake.getAxisLeft().setAxisMinimum(0); // Set minimum value to 0
+        barChartSugarIntake.getAxisLeft().setAxisMaximum(30);
+
         // Calculate the average exercise time
-        String targetLabel = "Target: 30";
-        LimitLine limitLine = new LimitLine(30f, targetLabel);
+        String targetLabel = "Target: 20";
+        LimitLine limitLine = new LimitLine(20f, targetLabel);
         limitLine.setLineWidth(1f);
         limitLine.setLineColor(Color.RED);
         limitLine.setTextColor(Color.BLACK);
