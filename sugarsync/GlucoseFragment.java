@@ -212,6 +212,7 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
 
             // Push the manual entry to Firebase
             pushManualEntryToFirebase(glucoseLevel, timestamp);
+            updateLineChartWithData();
 
             // Update LineChart with new data
             //updateLineChartWithData();

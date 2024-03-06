@@ -30,6 +30,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
@@ -339,7 +340,7 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     float totalGlucoseLevel = 0;
-                    Map<String, Float> bloodGlucoseMap = new HashMap<>();
+                    Map<String, List<Float>> bloodGlucoseMap = new HashMap<>();
 
                     for (DataSnapshot glucoseSnapshot : dataSnapshot.getChildren()) {
                         String timestamp = glucoseSnapshot.getKey();
@@ -357,16 +358,15 @@ public class HomeFragment extends Fragment {
                                 try {
                                     Float glucoseLevel = Float.parseFloat(glucoseLevelString);
 
-                                    // Aggregate glucose level values for each date
                                     if (date != null) {
                                         if (bloodGlucoseMap.containsKey(date)) {
-                                            bloodGlucoseMap.put(date, bloodGlucoseMap.get(date) + glucoseLevel);
+                                            bloodGlucoseMap.get(date).add(glucoseLevel);
                                         } else {
-                                            bloodGlucoseMap.put(date, glucoseLevel);
+                                            List<Float> glucoseLevels = new ArrayList<>();
+                                            glucoseLevels.add(glucoseLevel);
+                                            bloodGlucoseMap.put(date, glucoseLevels);
                                         }
                                     }
-
-                                    totalGlucoseLevel += glucoseLevel;
                                 } catch (NumberFormatException e) {
                                     // Handle parsing error if glucose level cannot be parsed to float
                                     Log.e(TAG, "Error parsing glucose level: " + glucoseLevelString);
@@ -374,12 +374,23 @@ public class HomeFragment extends Fragment {
                             }
                         }
                     }
-                    //updateGlucoseLevelProgressBar(totalGlucoseLevel);
-                    // Convert map to lists for chart display
-                    List<String> dates = new ArrayList<>(bloodGlucoseMap.keySet());
-                    List<Float> glucoseLevels = new ArrayList<>(bloodGlucoseMap.values());
 
-                    displayBloodGlucoseColumnChart(glucoseLevels, dates);
+                    // Calculate average glucose level for each day
+                    List<String> dates = new ArrayList<>();
+                    List<Float> averageGlucoseLevels = new ArrayList<>();
+                    for (Map.Entry<String, List<Float>> entry : bloodGlucoseMap.entrySet()) {
+                        String date = entry.getKey();
+                        List<Float> glucoseLevels = entry.getValue();
+                        float sum = 0;
+                        for (Float level : glucoseLevels) {
+                            sum += level;
+                        }
+                        float averageGlucoseLevel = sum / glucoseLevels.size();
+                        dates.add(date);
+                        averageGlucoseLevels.add(averageGlucoseLevel);
+                    }
+
+                    displayBloodGlucoseColumnChart(averageGlucoseLevels, dates);
                 }
 
                 @Override
@@ -419,6 +430,16 @@ public class HomeFragment extends Fragment {
 
         barChartBloodGlucose.setData(data);
         barChartBloodGlucose.setFitBars(true); // make the bars fit the viewport width
+
+        float morningTargetMin = 4.0f; // Morning target minimum value
+        float morningTargetMax = 6.0f; // Morning target maximum value
+        addLimitLineToAxis(barChartBloodGlucose, morningTargetMin, morningTargetMax, "Morning Target", Color.RED);
+
+        // Add evening target line
+        float eveningTargetMin = 8.0f; // Evening target minimum value
+        float eveningTargetMax = 10.0f; // Evening target maximum value
+        addLimitLineToAxis(barChartBloodGlucose, eveningTargetMin, eveningTargetMax, "Evening Target", Color.GREEN);
+
         barChartBloodGlucose.invalidate();
 
         Description description = new Description();
@@ -432,31 +453,25 @@ public class HomeFragment extends Fragment {
         xAxis.setLabelRotationAngle(0); // Rotate labels for better visibility
         xAxis.setLabelCount(dates.size()); // Set label count to match the number of dates
 
-        xAxis.setTextSize(12f);
-
-        float sum = 0;
-        for (float level : glucoseLevels) {
-            sum += level;
-        }
-        float averageGlucoseLevel = sum / glucoseLevels.size();
-
-        // Update the target value based on the average glucose level
-        float targetValue = averageGlucoseLevel * 2; // Example: Double the average value
-        String targetLabel = "Target: " + targetValue; // Optional: Customize the label
-
-        // Add a line at the updated target value
-        LimitLine limitLine = new LimitLine(targetValue, targetLabel);
-        limitLine.setLineWidth(1f);
-        limitLine.setLineColor(Color.RED);
-        limitLine.setTextColor(Color.BLACK);
-        limitLine.setTextSize(10f);
-
-        YAxis leftAxis = barChartBloodGlucose.getAxisLeft();
-        leftAxis.removeAllLimitLines(); // Remove previous limit lines
-        leftAxis.addLimitLine(limitLine);
 
         barChartBloodGlucose.animateY(2000); // animate the chart vertically
+
+
     }
+
+
+    private void addLimitLineToAxis(BarLineChartBase<?> chart, float min, float max, String label, int color) {
+        LimitLine limitLine = new LimitLine(max, label);
+        limitLine.setLineWidth(2f);
+        limitLine.setLineColor(color);
+        limitLine.enableDashedLine(10f, 10f, 0f);
+        limitLine.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+        limitLine.setTextSize(10f);
+
+        YAxis yAxis = chart.getAxisLeft();
+        yAxis.addLimitLine(limitLine);
+    }
+
 
 
     private void retrieveSugarIntakeData() {
