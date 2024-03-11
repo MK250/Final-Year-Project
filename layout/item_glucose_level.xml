@@ -51,8 +51,21 @@
         android:id="@+id/editButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Edit"
-        android:layout_gravity="center_vertical"/>
+        android:text=""
+        android:layout_gravity="center_vertical"
+        android:drawableLeft="@android:drawable/ic_menu_edit"
+        android:drawablePadding="8dp" />
+
+
+    <Button
+        android:id="@+id/deleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_gravity="center_vertical"
+        android:drawableLeft="@android:drawable/ic_menu_delete"
+        android:drawablePadding="8dp" />
+
 </LinearLayout>
 
 
