@@ -2,6 +2,7 @@ package com.example.sugarsync;
 
 import static android.content.ContentValues.TAG;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -19,6 +20,7 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +49,8 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -73,6 +77,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -95,6 +100,8 @@ public class HomeFragment extends Fragment {
 
     private Button buttonBolusAdvisor;
 
+    private Button buttonSetTargetRanges;
+
     private TextView sugarIntakeTextView;
 
     //private TextView textExerciseMinutes;
@@ -111,7 +118,7 @@ public class HomeFragment extends Fragment {
         retrieveSugarIntakeData();
 
         barChartBloodGlucose = view.findViewById(R.id.barChartBloodGlucose);
-        retrieveBloodGlucoseData();
+        retrieveBloodGlucoseData( );
 
         buttonBolusAdvisor = view.findViewById(R.id.buttonBolusAdvisor);
 
@@ -123,6 +130,16 @@ public class HomeFragment extends Fragment {
         TextView textSugarReading = view.findViewById(R.id.textSugarReading);
         // Assuming sugarIntakeTextView is declared as a field in your fragment
 
+
+        buttonSetTargetRanges = view.findViewById(R.id.buttonSetTargetRanges);
+
+        buttonSetTargetRanges.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Call a method to show the alert dialog
+                showTargetInputDialog();
+            }
+        });
 
 
         retrieveLatestSugarIntake(textSugarReading);
@@ -143,6 +160,12 @@ public class HomeFragment extends Fragment {
         TextView latestCheckTextView = view.findViewById(R.id.textLatestCheck);
         retrieveLatestCheckTimestamp(latestCheckTextView);
 
+
+        setupUI(view);
+
+        setupUISugar(view);
+
+        setupUIExercise(view);
 
         return view;
     }
@@ -318,7 +341,10 @@ public class HomeFragment extends Fragment {
     }
 
 
+    private static final int INTERVAL_LAST_7_DAYS = 7;
+    private static final int INTERVAL_LAST_30_DAYS = 30;
 
+    private int interval = 7;
     private void retrieveBloodGlucoseData() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -331,10 +357,10 @@ public class HomeFragment extends Fragment {
                     .child(userId)
                     .child("glucoseLevels");
 
-            // Calculate the timestamp for 7 days ago
-            Calendar sevenDaysAgoCalendar = Calendar.getInstance();
-            sevenDaysAgoCalendar.add(Calendar.DAY_OF_YEAR, -7);
-            long sevenDaysAgoTimestamp = sevenDaysAgoCalendar.getTimeInMillis();
+            // Calculate the timestamp for the specified interval
+            Calendar intervalStartCalendar = Calendar.getInstance();
+            intervalStartCalendar.add(Calendar.DAY_OF_YEAR, -interval);
+            long intervalStartTimestamp = intervalStartCalendar.getTimeInMillis();
 
             databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -349,8 +375,8 @@ public class HomeFragment extends Fragment {
                         // Convert timestamp to long
                         long glucoseTimestamp = Long.parseLong(timestamp);
 
-                        // Check if the date is within the last 7 days
-                        if (glucoseTimestamp >= sevenDaysAgoTimestamp) {
+                        // Check if the date is within the specified interval
+                        if (glucoseTimestamp >= intervalStartTimestamp) {
                             String glucoseLevelString = glucoseSnapshot.getValue(String.class);
 
                             // Convert glucose level from string to float
@@ -390,7 +416,7 @@ public class HomeFragment extends Fragment {
                         averageGlucoseLevels.add(averageGlucoseLevel);
                     }
 
-                    displayBloodGlucoseColumnChart(averageGlucoseLevels, dates);
+                    displayBloodGlucoseColumnChart( currentUser,averageGlucoseLevels, dates);
                 }
 
                 @Override
@@ -400,6 +426,33 @@ public class HomeFragment extends Fragment {
             });
         }
     }
+
+    // Method to set up UI and button click listeners
+    private void setupUI(View view) {
+        // Find buttons by their IDs using the fragment's view
+        Button buttonLast7Days = view.findViewById(R.id.buttonLast7Days);
+        Button buttonLast30Days = view.findViewById(R.id.buttonLast30Days);
+
+        // Set click listeners for buttons
+        buttonLast7Days.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                interval = INTERVAL_LAST_7_DAYS; // Set interval here
+                retrieveBloodGlucoseData();
+            }
+        });
+
+        buttonLast30Days.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                interval = INTERVAL_LAST_30_DAYS; // Set interval here
+                retrieveBloodGlucoseData();
+            }
+        });
+
+        retrieveBloodGlucoseData();
+    }
+
 
 
 
@@ -417,7 +470,117 @@ public class HomeFragment extends Fragment {
     }
 
 
-    private void displayBloodGlucoseColumnChart(List<Float> glucoseLevels, List<String> dates) {
+    private void showTargetInputDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_target_input, null);
+        builder.setView(dialogView);
+
+        EditText editTextMorningTargetMin = dialogView.findViewById(R.id.editTextMorningTargetMin);
+        EditText editTextMorningTargetMax = dialogView.findViewById(R.id.editTextMorningTargetMax);
+
+
+        RadioGroup radioGroup = dialogView.findViewById(R.id.radioGroup);
+
+        // Add a listener to the Save button
+        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                float morningMin = Float.parseFloat(editTextMorningTargetMin.getText().toString());
+                float morningMax = Float.parseFloat(editTextMorningTargetMax.getText().toString());
+
+
+                // Check which option the user selected
+                int selectedId = radioGroup.getCheckedRadioButtonId();
+                String targetOption;
+                if (selectedId == R.id.radioButtonDoctor) {
+                    targetOption = "Doctor Recommended";
+                } else {
+                    targetOption = "Personal";
+                }
+
+                // Save the target ranges and option to Firebase
+                saveTargetRangesToFirebase(morningMin, morningMax, targetOption);
+            }
+        });
+
+        builder.setNegativeButton("Cancel", null);
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void saveTargetRangesToFirebase(float morningMin, float morningMax, String targetOption) {
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+
+            DatabaseReference targetRef = FirebaseDatabase.getInstance().getReference()
+                    .child("users")
+                    .child(userId)
+                    .child("target");
+
+            Map<String, Object> targetMap = new HashMap<>();
+            targetMap.put("morningMin", morningMin);
+            targetMap.put("morningMax", morningMax);
+
+            targetMap.put("targetOption", targetOption);
+
+            targetRef.setValue(targetMap)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(getContext(), "Target ranges saved successfully", Toast.LENGTH_SHORT).show();
+                            // Refresh the blood glucose chart after saving the target ranges
+                            retrieveBloodGlucoseData();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getContext(), "Failed to save target ranges", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+    }
+
+
+    private void displayBloodGlucoseColumnChart(FirebaseUser currentUser,List<Float> glucoseLevels, List<String> dates) {
+
+        if (currentUser == null) {
+            // Handle the case where the user is not authenticated
+            return;
+        }
+
+        // Retrieve target ranges from Firebase
+        DatabaseReference targetRef = FirebaseDatabase.getInstance().getReference()
+                .child("users")
+                .child(currentUser.getUid())
+                .child("target");
+
+        targetRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    float morningMin = dataSnapshot.child("morningMin").getValue(Float.class);
+                    float morningMax = dataSnapshot.child("morningMax").getValue(Float.class);
+
+
+                    addLimitLineToAxis(barChartBloodGlucose, morningMin, morningMax,"Target Range", Color.RED);
+                   // addLimitLineToAxis(barChartBloodGlucose, morningMax, "Evening Target Range", Color.GREEN);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle database error
+                Log.e(TAG, "Database error: " + databaseError.getMessage());
+            }
+        });
+
+        // Code to display the blood glucose chart remains the same as before
         ArrayList<BarEntry> entries = new ArrayList<>();
         for (int i = 0; i < glucoseLevels.size(); i++) {
             entries.add(new BarEntry(i, glucoseLevels.get(i)));
@@ -431,15 +594,6 @@ public class HomeFragment extends Fragment {
         barChartBloodGlucose.setData(data);
         barChartBloodGlucose.setFitBars(true); // make the bars fit the viewport width
 
-        float morningTargetMin = 4.0f; // Morning target minimum value
-        float morningTargetMax = 6.0f; // Morning target maximum value
-        addLimitLineToAxis(barChartBloodGlucose, morningTargetMin, morningTargetMax, "Morning Target", Color.RED);
-
-        // Add evening target line
-        float eveningTargetMin = 8.0f; // Evening target minimum value
-        float eveningTargetMax = 10.0f; // Evening target maximum value
-        addLimitLineToAxis(barChartBloodGlucose, eveningTargetMin, eveningTargetMax, "Evening Target", Color.GREEN);
-
         barChartBloodGlucose.invalidate();
 
         Description description = new Description();
@@ -450,31 +604,39 @@ public class HomeFragment extends Fragment {
         xAxis.setValueFormatter(new IndexAxisValueFormatter(dates));
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularity(1);
-        xAxis.setLabelRotationAngle(0); // Rotate labels for better visibility
+        xAxis.setLabelRotationAngle(45); // Rotate labels for better visibility
         xAxis.setLabelCount(dates.size()); // Set label count to match the number of dates
+        xAxis.setAvoidFirstLastClipping(true); // Avoid clipping of first and last labels
 
+        // Enable touch gestures for scrolling
+        barChartBloodGlucose.setTouchEnabled(true);
+        barChartBloodGlucose.setDragEnabled(true);
+        barChartBloodGlucose.setScaleEnabled(true);
 
         barChartBloodGlucose.animateY(2000); // animate the chart vertically
-
-
     }
 
-
-    private void addLimitLineToAxis(BarLineChartBase<?> chart, float min, float max, String label, int color) {
-        LimitLine limitLine = new LimitLine(max, label);
-        limitLine.setLineWidth(2f);
-        limitLine.setLineColor(color);
-        limitLine.enableDashedLine(10f, 10f, 0f);
-        limitLine.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
-        limitLine.setTextSize(10f);
+    private void addLimitLineToAxis(BarLineChartBase<?> chart, float morningMin, float morningMax, String label, int color) {
+        LimitLine morningLimitLine = new LimitLine(morningMax, label);
+        morningLimitLine.setLineWidth(2f);
+        morningLimitLine.setLineColor(color);
+        morningLimitLine.enableDashedLine(10f, 10f, 0f);
+        morningLimitLine.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+        morningLimitLine.setTextSize(10f);
 
         YAxis yAxis = chart.getAxisLeft();
-        yAxis.addLimitLine(limitLine);
+        yAxis.addLimitLine(morningLimitLine);
     }
 
 
 
+    private int sugarInterval = 7;
+
     private void retrieveSugarIntakeData() {
+        // Calculate the time interval within the method
+
+        // You can modify interval here based on your requirements
+
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
             // User not logged in, handle accordingly
@@ -485,16 +647,15 @@ public class HomeFragment extends Fragment {
         DatabaseReference userDietRef = FirebaseDatabase.getInstance().getReference("users")
                 .child(userId).child("diets");
 
+        Calendar intervalStartCalendar = Calendar.getInstance();
+        intervalStartCalendar.add(Calendar.DAY_OF_YEAR, -sugarInterval);
+        long intervalStartTimestamp = intervalStartCalendar.getTimeInMillis();
+
         userDietRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 double totalSugarIntake = 0;
                 Map<String, Double> sugarIntakeMap = new HashMap<>();
-
-                // Calculate the timestamp for 7 days ago
-                Calendar sevenDaysAgoCalendar = Calendar.getInstance();
-                sevenDaysAgoCalendar.add(Calendar.DAY_OF_YEAR, -7);
-                long sevenDaysAgoTimestamp = sevenDaysAgoCalendar.getTimeInMillis();
 
                 for (DataSnapshot dietSnapshot : dataSnapshot.getChildren()) {
                     String date = dietSnapshot.child("date").getValue(String.class);
@@ -504,25 +665,19 @@ public class HomeFragment extends Fragment {
                         try {
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                             Date currentDate = sdf.parse(date);
-                            if (currentDate != null && currentDate.getTime() >= sevenDaysAgoTimestamp) {
-                                // Aggregate sugar intake values for each date
-
+                            if (currentDate != null && currentDate.getTime() >= intervalStartTimestamp) {
                                 // Aggregate sugar intake values for each date
                                 if (sugarIntakeMap.containsKey(date)) {
                                     sugarIntakeMap.put(date, sugarIntakeMap.get(date) + sugarIntake);
                                 } else {
                                     sugarIntakeMap.put(date, sugarIntake);
-
                                 }
-
-                                //totalSugarIntake += sugarIntake;
                             }
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
                     }
                 }
-               // updateSugarIntakeProgressBar(totalSugarIntake);
 
                 // Convert map to lists for chart display
                 List<String> dates = new ArrayList<>(sugarIntakeMap.keySet());
@@ -538,8 +693,32 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    private void setupUISugar(View view) {
+        Button buttonLast7Days = view.findViewById(R.id.buttonLast7DaysSugar); // Change button ID
+        Button buttonLast30Days = view.findViewById(R.id.buttonLast30DaysSugar); // Change button ID
 
 
+        buttonLast7Days.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sugarInterval = INTERVAL_LAST_7_DAYS;
+                retrieveSugarIntakeData();
+            }
+        });
+
+        buttonLast30Days.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sugarInterval = INTERVAL_LAST_30_DAYS;
+                retrieveSugarIntakeData();
+            }
+        });
+
+        retrieveSugarIntakeData();
+    }
+
+
+     private int exerciseInterval = 7;
 
     private void retrieveExerciseData() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -553,10 +732,10 @@ public class HomeFragment extends Fragment {
                     .child(userId)
                     .child("exercise");
 
-            // Calculate the timestamp for 7 days ago
-            Calendar sevenDaysAgoCalendar = Calendar.getInstance();
-            sevenDaysAgoCalendar.add(Calendar.DAY_OF_YEAR, -7);
-            long sevenDaysAgoTimestamp = sevenDaysAgoCalendar.getTimeInMillis();
+            // Calculate the timestamp for the specified interval
+            Calendar intervalStartCalendar = Calendar.getInstance();
+            intervalStartCalendar.add(Calendar.DAY_OF_YEAR, -exerciseInterval);
+            long intervalStartTimestamp = intervalStartCalendar.getTimeInMillis();
 
             databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -570,8 +749,8 @@ public class HomeFragment extends Fragment {
                             Float exerciseTime = exerciseSnapshot.child("exerciseTime").getValue(Float.class);
                             if (date != null && exerciseTime != null) {
                                 long day = getDayFromDate(date);
-                                // Check if the date is within the last 7 days
-                                if (day >= sevenDaysAgoTimestamp) {
+                                // Check if the date is within the specified interval
+                                if (day >= intervalStartTimestamp) {
                                     // Aggregate exercise times for each day
                                     if (exerciseTimesPerDay.containsKey(day)) {
                                         exerciseTimesPerDay.put(day, exerciseTimesPerDay.get(day) + exerciseTime);
@@ -593,6 +772,31 @@ public class HomeFragment extends Fragment {
                 }
             });
         }
+    }
+
+
+    private void setupUIExercise(View view) {
+        Button buttonLast7Days = view.findViewById(R.id.buttonLast7DaysExercise); // Change button ID
+        Button buttonLast30Days = view.findViewById(R.id.buttonLast30DaysExercise); // Change button ID
+
+
+        buttonLast7Days.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                exerciseInterval = INTERVAL_LAST_7_DAYS;
+                retrieveExerciseData();
+            }
+        });
+
+        buttonLast30Days.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                exerciseInterval = INTERVAL_LAST_30_DAYS;
+                retrieveExerciseData();
+            }
+        });
+
+        retrieveExerciseData();
     }
 
 
@@ -627,13 +831,15 @@ public class HomeFragment extends Fragment {
         xAxis.setValueFormatter(new IndexAxisValueFormatter(dates));
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularity(1);
-        xAxis.setLabelRotationAngle(20);  // Rotate labels for better visibility
+        xAxis.setLabelRotationAngle(45);  // Rotate labels for better visibility
         xAxis.setLabelCount(dates.size()); // Set label count to match the number of dates
-
-        xAxis.setTextSize(5f);
+        xAxis.setAvoidFirstLastClipping(true); // Avoid clipping of first and last labels
 
         barChartSugarIntake.getAxisLeft().setAxisMinimum(0); // Set minimum value to 0
-        barChartSugarIntake.getAxisLeft().setAxisMaximum(20);
+
+        // Set maximum value to the maximum sugar intake value + some buffer
+        double maxSugarIntake = Collections.max(sugarIntakeValues);
+        barChartSugarIntake.getAxisLeft().setAxisMaximum((float) (maxSugarIntake + 5)); // Adjust buffer as needed
 
         String targetLabel = "Target: 10";
         LimitLine limitLine = new LimitLine(10f, targetLabel);
@@ -646,8 +852,14 @@ public class HomeFragment extends Fragment {
         leftAxis.removeAllLimitLines(); // Remove previous limit lines
         leftAxis.addLimitLine(limitLine);
 
+        // Enable touch gestures for scrolling
+        barChartSugarIntake.setTouchEnabled(true);
+        barChartSugarIntake.setDragEnabled(true);
+        barChartSugarIntake.setScaleEnabled(true);
+
         barChartSugarIntake.animateY(2000); // animate the chart vertically
     }
+
 
     private long getDayFromDate(String dateString) {
         try {
@@ -691,15 +903,19 @@ public class HomeFragment extends Fragment {
         xAxis.setValueFormatter(new IndexAxisValueFormatter(dates));
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularity(1);
-        xAxis.setLabelRotationAngle(0);  // Rotate labels for better visibility
+        xAxis.setLabelRotationAngle(45);  // Rotate labels for better visibility
         xAxis.setLabelCount(dates.size()); // Set label count to match the number of dates
+        xAxis.setAvoidFirstLastClipping(true); // Avoid clipping of first and last labels
 
-        xAxis.setTextSize(7f);
+        barChart.getAxisLeft().setAxisMinimum(0); // Set minimum value to 0
 
-        barChartSugarIntake.getAxisLeft().setAxisMinimum(0); // Set minimum value to 0
-        barChartSugarIntake.getAxisLeft().setAxisMaximum(30);
+        // Set maximum value to the maximum exercise time value + some buffer
+        if (!exerciseTimes.isEmpty()) {
+            // Set maximum value to the maximum exercise time value + some buffer
+            float maxExerciseTime = Collections.max(exerciseTimes);
+            barChart.getAxisLeft().setAxisMaximum(maxExerciseTime + 5); // Adjust buffer as needed
+        }
 
-        // Calculate the average exercise time
         String targetLabel = "Target: 20";
         LimitLine limitLine = new LimitLine(20f, targetLabel);
         limitLine.setLineWidth(1f);
@@ -707,12 +923,17 @@ public class HomeFragment extends Fragment {
         limitLine.setTextColor(Color.BLACK);
         limitLine.setTextSize(10f);
 
-        YAxis leftAxis = barChartSugarIntake.getAxisLeft();
+        YAxis leftAxis = barChart.getAxisLeft();
         leftAxis.removeAllLimitLines(); // Remove previous limit lines
         leftAxis.addLimitLine(limitLine);
 
+        // Enable touch gestures for scrolling
+        barChart.setTouchEnabled(true);
+        barChart.setDragEnabled(true);
+        barChart.setScaleEnabled(true);
 
         barChart.animateY(2000); // animate the chart vertically
     }
+
 
 }
