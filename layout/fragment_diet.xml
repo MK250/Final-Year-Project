@@ -18,7 +18,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Breakfast" />
+        android:text="Breakfast"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
         android:id="@+id/editTextBreakfast"
@@ -35,7 +36,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Lunch" />
+        android:text="Lunch"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
         android:id="@+id/editTextLunch"
@@ -52,7 +54,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Dinner" />
+        android:text="Dinner"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
         android:id="@+id/editTextDinner"
@@ -61,37 +64,51 @@
         android:hint="Enter dinner" />
 
     <!-- Progress Bar to Track Sugar Intake -->
-    <ProgressBar
-        android:id="@+id/progressBarSugar"
-        style="?android:attr/progressBarStyleHorizontal"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_marginTop="16dp"
-        android:max="30"
-    android:progress="0" />
+        android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/textProgressFraction"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0/30"
-        android:layout_gravity="end" />
+        <ProgressBar
+            android:id="@+id/progressBarSugar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="30"
+            android:progress="0" />
 
+        <TextView
+            android:id="@+id/textProgressFraction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0/30"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_marginStart="8dp" />
+
+    </LinearLayout>
 
     <!-- Submit Button -->
     <Button
         android:id="@+id/buttonSubmit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Submit"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#00BCD4"
+        android:text="Submit" />
 
     <Button
         android:id="@+id/btnGetNutritionalInfo"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="Get Nutritional Info"
-    android:layout_marginTop="16dp" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#00BCD4"
+        android:text="Get Nutritional Info" />
+
+
 
 </LinearLayout>
+
 

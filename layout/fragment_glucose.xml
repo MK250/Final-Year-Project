@@ -43,6 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top|center"
             android:text="Capture"
+            android:backgroundTint="#00BCD4"
             android:layout_marginTop="16dp" />
 
         <TextView
@@ -61,6 +62,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top|center"
         android:text="Add manually"
+        android:backgroundTint="#00BCD4"
         android:layout_marginTop="16dp" />
 
     <TextView

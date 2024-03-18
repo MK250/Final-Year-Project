@@ -18,6 +18,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -66,7 +67,9 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.ImageCaptureException;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -148,6 +151,11 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_glucose, container, false);
+
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.customActionBarColor)));
+        }
         glucoseEntries = new ArrayList<>();
         lineChart = view.findViewById(R.id.lineChart);
         // configureLineChart();
