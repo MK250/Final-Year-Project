@@ -54,6 +54,7 @@
         android:text=""
         android:layout_gravity="center_vertical"
         android:drawableLeft="@android:drawable/ic_menu_edit"
+        android:background="@android:color/transparent"
         android:drawablePadding="8dp" />
 
 
@@ -64,6 +65,7 @@
         android:text=""
         android:layout_gravity="center_vertical"
         android:drawableLeft="@android:drawable/ic_menu_delete"
+        android:background="@android:color/transparent"
         android:drawablePadding="8dp" />
 
 </LinearLayout>

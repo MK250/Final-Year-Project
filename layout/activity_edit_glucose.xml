@@ -26,6 +26,7 @@
         android:id="@+id/saveButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:backgroundTint="#00BCD4"
         android:text="Save Changes"
         android:layout_marginBottom="16dp"/>
 

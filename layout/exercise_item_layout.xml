@@ -40,12 +40,7 @@
             android:src="@android:drawable/ic_menu_edit"
             android:contentDescription="Edit"/>
 
-        <ImageButton
-            android:id="@+id/deleteTypeButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_delete"
-            android:contentDescription="Delete"/>
+
     </LinearLayout>
 
     <!-- Exercise Time with Edit and Delete Icons -->
@@ -72,12 +67,7 @@
             android:src="@android:drawable/ic_menu_edit"
             android:contentDescription="Edit"/>
 
-        <ImageButton
-            android:id="@+id/deleteTimeButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_delete"
-            android:contentDescription="Delete"/>
+
     </LinearLayout>
 
 </LinearLayout>

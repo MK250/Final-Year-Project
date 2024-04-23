@@ -45,15 +45,7 @@
             android:layout_marginTop="8dp"
             android:onClick="onEditBreakfastClicked" />
 
-        <ImageView
-            android:id="@+id/imageViewDeleteBreakfast"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@android:drawable/ic_menu_delete"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_marginTop="8dp"
-            android:onClick="onDeleteBreakfastClicked" />
+
     </LinearLayout>
 
     <!-- Entry: Lunch -->
@@ -83,15 +75,7 @@
             android:layout_marginTop="8dp"
             android:onClick="onEditLunchClicked" />
 
-        <ImageView
-            android:id="@+id/imageViewDeleteLunch"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@android:drawable/ic_menu_delete"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_marginTop="8dp"
-            android:onClick="onDeleteLunchClicked" />
+
     </LinearLayout>
 
     <!-- Entry: Dinner -->
@@ -121,18 +105,11 @@
             android:layout_marginTop="8dp"
             android:onClick="onEditDinnerClicked" />
 
-        <ImageView
-            android:id="@+id/imageViewDeleteDinner"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@android:drawable/ic_menu_delete"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_marginTop="8dp"
-            android:onClick="onDeleteDinnerClicked" />
+
     </LinearLayout>
 
 </LinearLayout>
+
 
 
 

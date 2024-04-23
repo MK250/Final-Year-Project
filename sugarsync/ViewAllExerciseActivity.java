@@ -37,7 +37,7 @@ public class ViewAllExerciseActivity extends AppCompatActivity implements Exerci
     private RecyclerView recyclerView;
     private ExerciseAdapter exerciseAdapter;
 
-    private SearchView searchView;
+  //  private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,16 +60,17 @@ public class ViewAllExerciseActivity extends AppCompatActivity implements Exerci
 
 
 
-        searchView = findViewById(R.id.searchView);
+     //   searchView = findViewById(R.id.searchView);
 
         // Setup search functionality
-        setupSearchView();
+      //  setupSearchView();
 
         // Retrieve exercise data from Firebase and populate the adapter
        retrieveExerciseData();
 
     }
 
+    /*
     private void setupSearchView() {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -86,7 +87,7 @@ public class ViewAllExerciseActivity extends AppCompatActivity implements Exerci
             }
         });
     }
-
+*/
 
     @Override
     public void onEditClick(int position, String field) {

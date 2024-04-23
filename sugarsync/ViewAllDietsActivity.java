@@ -198,6 +198,8 @@ public class ViewAllDietsActivity extends AppCompatActivity {
         builder.show();
     }
 
+
+
     private void deleteDietEntry(int position, Diet diet, String mealType) {
         // Get user ID from Firebase authentication
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -221,16 +223,39 @@ public class ViewAllDietsActivity extends AppCompatActivity {
         DatabaseReference dietRef = userDietsRef.child(dietId);
 
         // Remove the specific meal type from the diet entry
-        diet.removeMealType(mealType);
+        switch (mealType) {
+            case "breakfast":
+                dietRef.child("breakfast").removeValue();
+                break;
+            case "lunch":
+                dietRef.child("lunch").removeValue();
+                break;
+            case "dinner":
+                dietRef.child("dinner").removeValue();
+                break;
+        }
 
         // Update the values in Firebase
-        dietRef.setValue(diet).addOnSuccessListener(aVoid -> {
-            // Display a toast message
-            Toast.makeText(this, "Diet entry updated", Toast.LENGTH_SHORT).show();
-        }).addOnFailureListener(e -> {
-            // Handle failure, if any
-            Toast.makeText(this, "Failed to update diet entry", Toast.LENGTH_SHORT).show();
+        dietRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Remove the meal type locally from the diet object
+                diet.removeMealType(mealType);
+
+                // Notify the adapter that the data set has changed
+                dietAdapter.notifyDataSetChanged();
+
+                // Display a toast message
+                Toast.makeText(ViewAllDietsActivity.this, "Diet entry updated", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle failure, if any
+                Toast.makeText(ViewAllDietsActivity.this, "Failed to update diet entry", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
 }
+

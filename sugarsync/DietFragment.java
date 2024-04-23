@@ -1,9 +1,18 @@
 package com.example.sugarsync;
 
+
+
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,9 +20,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,11 +44,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import okhttp3.OkHttpClient;
@@ -76,6 +90,8 @@ public class DietFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_diet, container, false);
+
+
 
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (actionBar != null) {
@@ -117,12 +133,80 @@ public class DietFragment extends Fragment {
         btnGetNutritionalInfo.setOnClickListener(v -> getNutritionalInfo());
 
 
+        setupAlarmManager();
 
+        checkDietForPast24Hours();
         return view;
 
 
     }
 
+
+
+
+
+
+
+    private void checkDietForPast24Hours() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            // User not logged in, handle accordingly
+            return;
+        }
+
+        String userId = currentUser.getUid();
+
+        // Get the current date and the date 24 hours ago
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -1);
+        Date twentyFourHoursAgo = calendar.getTime();
+
+        // Convert dates to formatted strings
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        String currentDate = dateFormat.format(new Date());
+        String twentyFourHoursAgoDate = dateFormat.format(twentyFourHoursAgo);
+
+        // Debugging statements
+        Log.d("Date_Debug", "Current Date: " + currentDate);
+        Log.d("Date_Debug", "24 Hours Ago: " + twentyFourHoursAgoDate);
+
+        // Query Firebase to check if there is diet data for the past 24 hours
+        DatabaseReference userDietsRef = FirebaseDatabase.getInstance().getReference("users")
+                .child(userId)
+                .child("diets");
+
+        userDietsRef.orderByChild("date")
+                .startAt(twentyFourHoursAgoDate)
+                .endAt(currentDate)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (!dataSnapshot.exists()) {
+                            // No diet data found for the past 24 hours, show alert dialogue
+                            Log.d("Diet_Debug", "No diet data found for the past 24 hours");
+                            showNoDietDataAlert();
+                        } else {
+                            Log.d("Diet_Debug", "Diet data found for the past 24 hours");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        // Handle error
+                    }
+                });
+    }
+
+    private void showNoDietDataAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Reminder");
+        builder.setMessage("You haven't inputted your diet for the past 24 hours. Please make sure to record your meals.");
+
+        builder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 
 
     private void getNutritionalInfo() {
@@ -267,6 +351,8 @@ public class DietFragment extends Fragment {
         String lunch = editTextLunch.getText().toString();
         String dinner = editTextDinner.getText().toString();
 
+
+
         // Make an API request to get nutritional info for all meals
         String ingredients = breakfast + "," + lunch + "," + dinner;
         Call<NutritionResponse> call = edamamApiService.getNutritionalInfo(
@@ -352,6 +438,39 @@ public class DietFragment extends Fragment {
         Date date = new Date();
         return dateFormat.format(date);
     }
+
+    private void setupAlarmManager() {
+        AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
+        Intent notificationIntent = new Intent(requireContext(), NotificationReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        // Set the alarm to trigger every day at 1 PM
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 13); // 1 PM
+        calendar.set(Calendar.MINUTE, 0);
+        long triggerTime = calendar.getTimeInMillis();
+
+        // Ensure the trigger time is in the future
+        if (triggerTime <= System.currentTimeMillis()) {
+            calendar.add(Calendar.DAY_OF_YEAR, 1); // Move to next day if the trigger time has passed for today
+            triggerTime = calendar.getTimeInMillis();
+        }
+
+        // Set interval to repeat the alarm daily
+        long intervalMillis = AlarmManager.INTERVAL_DAY;
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, triggerTime, intervalMillis, pendingIntent);
+    }
+
+
+    private void triggerImmediateNotification() {
+        Intent intent = new Intent(requireContext(), NotificationReceiver.class);
+        intent.setAction("TEST_NOTIFICATION_ACTION"); // Custom action to identify immediate testing
+        requireContext().sendBroadcast(intent);
+    }
+
+
+
 
 }
 

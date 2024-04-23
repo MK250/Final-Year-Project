@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -43,11 +44,11 @@ public class DietAdapter extends RecyclerView.Adapter<DietAdapter.DietViewHolder
             lunchTextView = itemView.findViewById(R.id.lunchTextView);
             dinnerTextView = itemView.findViewById(R.id.dinnerTextView);
             imageViewEditBreakfast = itemView.findViewById(R.id.imageViewEditBreakfast);
-            imageViewDeleteBreakfast = itemView.findViewById(R.id.imageViewDeleteBreakfast);
+
             imageViewEditLunch = itemView.findViewById(R.id.imageViewEditLunch);
-            imageViewDeleteLunch = itemView.findViewById(R.id.imageViewDeleteLunch);
+
             imageViewEditDinner = itemView.findViewById(R.id.imageViewEditDinner);
-            imageViewDeleteDinner = itemView.findViewById(R.id.imageViewDeleteDinner);
+
         }
     }
 
@@ -81,7 +82,6 @@ public class DietAdapter extends RecyclerView.Adapter<DietAdapter.DietViewHolder
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.diet_item_layout, parent, false);
         return new DietViewHolder(view);
     }
-
     @Override
     public void onBindViewHolder(@NonNull DietViewHolder holder, int position) {
         Diet diet = dietList.get(position);
@@ -90,12 +90,36 @@ public class DietAdapter extends RecyclerView.Adapter<DietAdapter.DietViewHolder
         holder.lunchTextView.setText("Lunch: " + diet.getLunch());
         holder.dinnerTextView.setText("Dinner: " + diet.getDinner());
 
-        if (diet.isMealTypeNull("breakfast")) {
+        // Check if the meal is empty and hide the corresponding views
+        if (TextUtils.isEmpty(diet.getBreakfast())) {
             holder.breakfastTextView.setVisibility(View.GONE);
+            holder.imageViewEditBreakfast.setVisibility(View.GONE);
+          //  holder.imageViewDeleteBreakfast.setVisibility(View.GONE);
         } else {
             holder.breakfastTextView.setVisibility(View.VISIBLE);
+            holder.imageViewEditBreakfast.setVisibility(View.VISIBLE);
+           // holder.imageViewDeleteBreakfast.setVisibility(View.VISIBLE);
         }
 
+        if (TextUtils.isEmpty(diet.getLunch())) {
+            holder.lunchTextView.setVisibility(View.GONE);
+            holder.imageViewEditLunch.setVisibility(View.GONE);
+          //  holder.imageViewDeleteLunch.setVisibility(View.GONE);
+        } else {
+            holder.lunchTextView.setVisibility(View.VISIBLE);
+            holder.imageViewEditLunch.setVisibility(View.VISIBLE);
+           // holder.imageViewDeleteLunch.setVisibility(View.VISIBLE);
+        }
+
+        if (TextUtils.isEmpty(diet.getDinner())) {
+            holder.dinnerTextView.setVisibility(View.GONE);
+            holder.imageViewEditDinner.setVisibility(View.GONE);
+          //  holder.imageViewDeleteDinner.setVisibility(View.GONE);
+        } else {
+            holder.dinnerTextView.setVisibility(View.VISIBLE);
+            holder.imageViewEditDinner.setVisibility(View.VISIBLE);
+          //  holder.imageViewDeleteDinner.setVisibility(View.VISIBLE);
+        }
 
         holder.imageViewEditBreakfast.setOnClickListener(v -> {
             if (onEditClickListener != null) {
@@ -103,11 +127,11 @@ public class DietAdapter extends RecyclerView.Adapter<DietAdapter.DietViewHolder
             }
         });
 
-        holder.imageViewDeleteBreakfast.setOnClickListener(v -> {
-            if (onDeleteClickListener != null) {
-                onDeleteClickListener.onDeleteClick(position, diet, "breakfast");
-            }
-        });
+      //  holder.imageViewDeleteBreakfast.setOnClickListener(v -> {
+          //  if (onDeleteClickListener != null) {
+          //      onDeleteClickListener.onDeleteClick(position, diet, "breakfast");
+         //   }
+      //  });
 
         holder.imageViewEditLunch.setOnClickListener(v -> {
             if (onEditClickListener != null) {
@@ -115,12 +139,11 @@ public class DietAdapter extends RecyclerView.Adapter<DietAdapter.DietViewHolder
             }
         });
 
-
-        holder.imageViewDeleteLunch.setOnClickListener(v -> {
-            if (onDeleteClickListener != null) {
-                onDeleteClickListener.onDeleteClick(position, diet, "lunch");
-            }
-        });
+      //  holder.imageViewDeleteLunch.setOnClickListener(v -> {
+        //    if (onDeleteClickListener != null) {
+         //       onDeleteClickListener.onDeleteClick(position, diet, "lunch");
+         //   }
+      //  });
 
         holder.imageViewEditDinner.setOnClickListener(v -> {
             if (onEditClickListener != null) {
@@ -128,32 +151,13 @@ public class DietAdapter extends RecyclerView.Adapter<DietAdapter.DietViewHolder
             }
         });
 
-        holder.imageViewDeleteDinner.setOnClickListener(v -> {
-            if (onDeleteClickListener != null) {
-                onDeleteClickListener.onDeleteClick(position, diet, "dinner");
-            }
-        });
-
-
-        // Check if the meal is empty and hide the corresponding views
-        if (TextUtils.isEmpty(diet.getBreakfast())) {
-            holder.breakfastTextView.setVisibility(View.GONE);
-            holder.imageViewEditBreakfast.setVisibility(View.GONE);
-            holder.imageViewDeleteBreakfast.setVisibility(View.GONE);
-        }
-
-        if (TextUtils.isEmpty(diet.getLunch())) {
-            holder.lunchTextView.setVisibility(View.GONE);
-            holder.imageViewEditLunch.setVisibility(View.GONE);
-            holder.imageViewDeleteLunch.setVisibility(View.GONE);
-        }
-
-        if (TextUtils.isEmpty(diet.getDinner())) {
-            holder.dinnerTextView.setVisibility(View.GONE);
-            holder.imageViewEditDinner.setVisibility(View.GONE);
-            holder.imageViewDeleteDinner.setVisibility(View.GONE);
-        }
+      //  holder.imageViewDeleteDinner.setOnClickListener(v -> {
+        //    if (onDeleteClickListener != null) {
+          //      onDeleteClickListener.onDeleteClick(position, diet, "dinner");
+          //  }
+       // });
     }
+
 
     public void removeMealType(int position, String mealType) {
         Diet diet = dietList.get(position);
@@ -188,5 +192,6 @@ public class DietAdapter extends RecyclerView.Adapter<DietAdapter.DietViewHolder
         return dietList.size();
     }
 }
+
 
 

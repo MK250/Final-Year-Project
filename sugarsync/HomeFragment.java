@@ -18,10 +18,13 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -485,18 +488,36 @@ public class HomeFragment extends Fragment {
 
         EditText editTextMorningTargetMin = dialogView.findViewById(R.id.editTextMorningTargetMin);
         EditText editTextMorningTargetMax = dialogView.findViewById(R.id.editTextMorningTargetMax);
-
+        EditText editTextAge = dialogView.findViewById(R.id.editTextAge);
+        Spinner spinnerDiabetesType = dialogView.findViewById(R.id.spinnerDiabetesType);
+        EditText editTextWeight = dialogView.findViewById(R.id.editTextWeight);
+        EditText editTextAverageGlucose = dialogView.findViewById(R.id.editTextAverageGlucose);
 
         RadioGroup radioGroup = dialogView.findViewById(R.id.radioGroup);
+
+        // Additional fields layout
+        LinearLayout personalFieldsLayout = dialogView.findViewById(R.id.personalFieldsLayout);
+
+
+
+
+// Sample data for the spinner
+        String[] diabetesTypes = {"Type 1", "Type 2", "Gestational", "Other"};
+
+// Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, diabetesTypes);
+
+// Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+// Apply the adapter to the spinner
+        spinnerDiabetesType.setAdapter(adapter);
+
 
         // Add a listener to the Save button
         builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                float morningMin = Float.parseFloat(editTextMorningTargetMin.getText().toString());
-                float morningMax = Float.parseFloat(editTextMorningTargetMax.getText().toString());
-
-
                 // Check which option the user selected
                 int selectedId = radioGroup.getCheckedRadioButtonId();
                 String targetOption;
@@ -506,16 +527,138 @@ public class HomeFragment extends Fragment {
                     targetOption = "Personal";
                 }
 
-                // Save the target ranges and option to Firebase
+                // Initialize morning min and max
+                float morningMin = 0.0f;
+                float morningMax = 0.0f;
+
+                // Calculate or get the morning min and max based on the target option
+                if (targetOption.equals("Personal")) {
+                    // Parse additional user inputs
+                    int age = Integer.parseInt(editTextAge.getText().toString());
+                    String diabetesType = spinnerDiabetesType.getSelectedItem().toString();
+                    float weight = Float.parseFloat(editTextWeight.getText().toString());
+                    float averageGlucose = Float.parseFloat(editTextAverageGlucose.getText().toString());
+
+                    // Perform calculation using the provided data
+                    morningMin = calculateTargetMin(age, weight, diabetesType, averageGlucose);
+                    morningMax = calculateTargetMax(age, weight, diabetesType, averageGlucose);
+                } else if (targetOption.equals("Doctor Recommended")) {
+                    // Parse entered morning min and max values
+                    morningMin = Float.parseFloat(editTextMorningTargetMin.getText().toString());
+                    morningMax = Float.parseFloat(editTextMorningTargetMax.getText().toString());
+                }
+
+                // Save the target ranges to Firebase
                 saveTargetRangesToFirebase(morningMin, morningMax, targetOption);
             }
         });
 
         builder.setNegativeButton("Cancel", null);
 
+        // Add a listener to the radio group
+        // Add a listener to the radio group
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.radioButtonPersonal) {
+                    // Show the additional fields
+                    personalFieldsLayout.setVisibility(View.VISIBLE);
+                    // Hide morning min and max fields
+                    editTextMorningTargetMin.setVisibility(View.GONE);
+                    editTextMorningTargetMax.setVisibility(View.GONE);
+                } else {
+                    // Hide the additional fields
+                    personalFieldsLayout.setVisibility(View.GONE);
+                    // Show morning min and max fields
+
+                }
+
+
+            }
+        });
+
+
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
+
+    // Function to calculate the minimum target range based on age, weight, diabetes type, and average glucose reading
+    // Function to calculate the minimum target range based on age, weight, diabetes type, and average glucose reading
+    private float calculateTargetMin(int age, float weight, String diabetesType, float averageGlucose) {
+        float targetMin;
+
+        // Adjust target min based on age
+        if (age < 30) {
+            // Example: Lower target range for younger individuals
+            targetMin = 4.0f;
+        } else {
+            // Example: Higher target range for older individuals
+            targetMin = 4.5f;
+        }
+
+        // Adjust target min based on weight
+        // Example: Increase target range for higher weight individuals
+        targetMin += weight * 0.1f;
+
+        // Adjust target min based on diabetes type
+        // Example: Different target ranges for different types of diabetes
+        if (diabetesType.equals("Type 1")) {
+            // Example: Lower target range for type 1 diabetes
+            targetMin -= 0.5f;
+        } else if (diabetesType.equals("Type 2")) {
+            // Example: Higher target range for type 2 diabetes
+            targetMin += 0.5f;
+        }
+
+        // Adjust target min based on average glucose reading
+        // Example: Increase target range if average glucose is high
+        if (averageGlucose > 7.0f) {
+            targetMin += 1.0f;
+        }
+
+        return targetMin;
+    }
+
+    // Function to calculate the maximum target range based on age, weight, diabetes type, and average glucose reading
+    // Function to calculate the maximum target range based on age, weight, diabetes type, and average glucose reading
+    private float calculateTargetMax(int age, float weight, String diabetesType, float averageGlucose) {
+        // Example calculation:
+        float targetMax = 0.0f;
+
+        // Adjust target max based on age
+        if (age < 30) {
+            // Example: Lower target range for younger individuals
+            targetMax = 8.0f;
+        } else {
+            // Example: Higher target range for older individuals
+            targetMax = 9.0f;
+        }
+
+        // Adjust target max based on weight
+        // Example: Increase target range for higher weight individuals
+        targetMax += weight * 0.1f;
+
+        // Adjust target max based on diabetes type
+        // Example: Different target ranges for different types of diabetes
+        if (diabetesType.equals("Type 1")) {
+            // Example: Lower target range for type 1 diabetes
+            targetMax -= 0.5f;
+        } else if (diabetesType.equals("Type 2")) {
+            // Example: Higher target range for type 2 diabetes
+            targetMax += 0.5f;
+        }
+
+        // Adjust target max based on average glucose reading
+        // Example: Increase target range if average glucose is high
+        if (averageGlucose > 7.0f) {
+            targetMax += 1.0f;
+        }
+
+        return targetMax;
+    }
+
+
+
 
     private void saveTargetRangesToFirebase(float morningMin, float morningMax, String targetOption) {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -615,6 +758,10 @@ public class HomeFragment extends Fragment {
         xAxis.setLabelRotationAngle(45); // Rotate labels for better visibility
         xAxis.setLabelCount(dates.size()); // Set label count to match the number of dates
         xAxis.setAvoidFirstLastClipping(true); // Avoid clipping of first and last labels
+
+
+
+
 
         // Enable touch gestures for scrolling
         barChartBloodGlucose.setTouchEnabled(true);

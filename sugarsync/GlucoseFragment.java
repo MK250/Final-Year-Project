@@ -74,6 +74,7 @@ import androidx.camera.core.ImageCaptureException;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.camera.core.Camera;
@@ -111,6 +112,7 @@ import android.view.ViewGroup;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -187,7 +189,22 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
             }
         });
 
-        fetchUserGlucoseData();
+        fetchUserGlucoseData(new FirebaseDataCallback() {
+            @Override
+            public void onDataReceived(List<Entry> glucoseEntries) {
+                // Handle the received glucose data here
+                // For example, update the LineChart with the received data
+                configureLineChart();
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                // Handle the error here
+                // For example, show a toast message indicating the error
+                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+
         configureLineChart();
         //updateLineChartWithData();
         //fetchUserGlucoseData();
@@ -285,9 +302,76 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
             // Handle the menu item click to open ViewAllGlucoseActivity
             startActivity(new Intent(requireContext(), ViewAllGlucoseActivity.class));
             return true;
+        } else if (item.getItemId() == R.id.menu_email_data) {
+            // Handle the menu item click to email glucose data
+            emailGlucoseDataToUser();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
+
+
+
+    private String generateCsvData(List<Entry> glucoseEntries) {
+        StringBuilder csvData = new StringBuilder();
+        csvData.append("Glucose Level\n");
+        for (Entry entry : glucoseEntries) {
+            csvData.append(entry.getY()).append("\n"); // Append only the glucose level
+        }
+        return csvData.toString();
+    }
+
+
+
+
+
+    private File createCsvFile(List<Entry> glucoseEntries) {
+        String csvData = generateCsvData(glucoseEntries);
+        try {
+            File csvFile = new File(requireContext().getCacheDir(), "glucose_data.csv");
+            FileWriter writer = new FileWriter(csvFile);
+            writer.append(csvData);
+            writer.flush();
+            writer.close();
+            return csvFile;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void emailGlucoseDataToUser() {
+        // Fetch glucose data from Firebase
+        fetchUserGlucoseData(new FirebaseDataCallback() {
+            @Override
+            public void onDataReceived(List<Entry> glucoseEntries) {
+                // Create CSV file
+                File csvFile = createCsvFile(glucoseEntries);
+
+                // Create and send email intent
+                if (csvFile != null) {
+                    // Create an intent to send email
+                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                    emailIntent.setType("text/plain");
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Your Glucose Data");
+                    emailIntent.putExtra(Intent.EXTRA_TEXT, "Please find attached your glucose data in CSV format.");
+                    Uri csvUri = FileProvider.getUriForFile(requireContext(), requireContext().getPackageName() + ".fileprovider", csvFile);
+                    emailIntent.putExtra(Intent.EXTRA_STREAM, csvUri);
+                    emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // Grant read permission to the receiving app
+                    startActivity(Intent.createChooser(emailIntent, "Send Email"));
+                } else {
+                    Toast.makeText(requireContext(), "Failed to create CSV file", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
 
     private void pushManualEntryToFirebase(String glucoseLevel, long timestamp) {
@@ -325,44 +409,38 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
     }
 
 
-    private void fetchUserGlucoseData() {
+    private void fetchUserGlucoseData(FirebaseDataCallback callback) {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null) {
             String userId = currentUser.getUid();
-            Log.d("Chart", "User authenticated. UID: " + userId);
-
-            DatabaseReference userRef = myRef.child("glucoseLevels");
+            DatabaseReference userRef = myRef.child(userId).child("glucoseLevels");
 
             userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    glucoseEntries.clear();
-                    Log.d("Chart", "Number of children under glucoseLevels: " + snapshot.getChildrenCount());
+                    List<Entry> glucoseEntries = new ArrayList<>();
                     for (DataSnapshot entrySnapshot : snapshot.getChildren()) {
                         long timestamp = Long.parseLong(entrySnapshot.getKey());
                         String glucoseLevel = entrySnapshot.getValue(String.class);
-
-                        // Add the fetched entry to the LineChart
                         glucoseEntries.add(new Entry(timestamp, Float.parseFloat(glucoseLevel)));
-                        Log.d("Chart", "Entry: Timestamp=" + timestamp + ", GlucoseLevel=" + glucoseLevel);
                     }
-                    Log.d("Chart", "Fetched " + glucoseEntries.size() + " entries from Firebase");
-                    // Update LineChart with the fetched data
-                    updateLineChartWithData();
+                    callback.onDataReceived(glucoseEntries);
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    // Handle error
-                    Toast.makeText(requireContext(), "Failed to fetch data", Toast.LENGTH_SHORT).show();
-                    Log.e("Chart", "Failed to fetch data from Firebase: " + error.getMessage());
+                    callback.onError("Failed to fetch glucose data from Firebase");
                 }
             });
         }
     }
 
+    interface FirebaseDataCallback {
+        void onDataReceived(List<Entry> glucoseEntries);
+        void onError(String errorMessage);
+    }
 
     private void configureLineChart() {
         lineChart.setDragEnabled(true);
@@ -374,8 +452,25 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularity(1f);
 
+        // Create an empty LineDataSet with a label
+        LineDataSet emptyDataSet = new LineDataSet(new ArrayList<>(), "Glucose Levels");
+
+        // Customize the appearance of the empty dataset (optional)
+        emptyDataSet.setColor(Color.GRAY); // Set line color
+        emptyDataSet.setCircleColor(Color.GRAY); // Set circle color
+        emptyDataSet.setLineWidth(2f); // Set line width
+        emptyDataSet.setCircleRadius(4f); // Set circle radius
+        emptyDataSet.setDrawCircleHole(false); // Don't draw circle hole
+
+        // Create an empty LineData with the empty dataset
+        LineData emptyData = new LineData(emptyDataSet);
+
+        // Set the empty data to the LineChart
+        lineChart.setData(emptyData);
+
         lineChart.setOnChartValueSelectedListener(this);
     }
+
 
 
     @Override
