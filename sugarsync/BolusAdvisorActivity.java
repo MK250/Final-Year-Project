@@ -61,7 +61,7 @@ public class BolusAdvisorActivity extends AppCompatActivity {
     }
 
     private void refreshYouTubeVideo() {
-        YouTubePlayerView youTubePlayerView = new YouTubePlayerView(this); // or use getContext() instead of this
+        YouTubePlayerView youTubePlayerView = new YouTubePlayerView(this);
         youtubePlayerContainer.removeAllViews();
         youtubePlayerContainer.addView(youTubePlayerView);
 

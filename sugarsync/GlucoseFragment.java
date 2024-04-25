@@ -485,7 +485,7 @@ public class GlucoseFragment extends Fragment implements OnChartValueSelectedLis
 
     @Override
     public void onNothingSelected() {
-        // Do nothing when no value is selected
+
     }
 
     private void showDataPointInfo(Entry selectedEntry) {

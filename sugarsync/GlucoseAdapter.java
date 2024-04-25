@@ -47,7 +47,7 @@ public class GlucoseAdapter extends RecyclerView.Adapter<GlucoseAdapter.GlucoseV
         GlucoseEntry glucoseEntry = glucoseEntries.get(position);
         holder.bind(glucoseEntry);
 
-        // Show title only for the first entry
+
         if (position == 0) {
             holder.titleTextView.setVisibility(View.VISIBLE);
         } else {
@@ -138,8 +138,7 @@ public class GlucoseAdapter extends RecyclerView.Adapter<GlucoseAdapter.GlucoseV
         }
 
         private void editGlucoseLevel(GlucoseEntry glucoseEntry) {
-            // You can start an activity or show a dialog for editing the glucose level here
-            // For simplicity, let's assume you start an activity
+
             Context context = itemView.getContext();
             Intent intent = new Intent(context, EditGlucoseActivity.class);
             intent.putExtra("glucoseEntry", glucoseEntry); // Pass glucose entry to the edit activity

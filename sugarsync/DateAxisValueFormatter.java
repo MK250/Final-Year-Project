@@ -12,7 +12,7 @@ public class DateAxisValueFormatter extends ValueFormatter {
 
     @Override
     public String getAxisLabel(float value, AxisBase axis) {
-        // Convert float value to a Date
+
         long millis = System.currentTimeMillis();
         Date date = new Date(millis);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());

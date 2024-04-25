@@ -123,10 +123,10 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // Handle logout logic here
-                // For example, you can start a LoginActivity to log the user out
+
                 Intent intent = new Intent(getActivity(), Login_Activity.class);
                 startActivity(intent);
-                getActivity().finish(); // Optional: Close the current activity if needed
+                getActivity().finish();
             }
         });
 

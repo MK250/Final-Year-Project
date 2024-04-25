@@ -152,7 +152,7 @@ public class ViewAllGlucoseActivity extends AppCompatActivity implements Glucose
         }
     }
 
-    // Handle the result from EditGlucoseActivity
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

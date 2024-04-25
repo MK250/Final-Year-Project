@@ -8,6 +8,6 @@ public class MyFirebaseMessagingReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        // Handle notification clicks here
+
     }
 }

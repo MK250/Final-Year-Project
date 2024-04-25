@@ -495,7 +495,7 @@ public class HomeFragment extends Fragment {
 
         RadioGroup radioGroup = dialogView.findViewById(R.id.radioGroup);
 
-        // Additional fields layout
+
         LinearLayout personalFieldsLayout = dialogView.findViewById(R.id.personalFieldsLayout);
 
 
@@ -555,8 +555,7 @@ public class HomeFragment extends Fragment {
 
         builder.setNegativeButton("Cancel", null);
 
-        // Add a listener to the radio group
-        // Add a listener to the radio group
+
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -582,36 +581,35 @@ public class HomeFragment extends Fragment {
         alertDialog.show();
     }
 
-    // Function to calculate the minimum target range based on age, weight, diabetes type, and average glucose reading
+
     // Function to calculate the minimum target range based on age, weight, diabetes type, and average glucose reading
     private float calculateTargetMin(int age, float weight, String diabetesType, float averageGlucose) {
         float targetMin;
 
         // Adjust target min based on age
         if (age < 30) {
-            // Example: Lower target range for younger individuals
+
             targetMin = 4.0f;
         } else {
-            // Example: Higher target range for older individuals
+
             targetMin = 4.5f;
         }
 
         // Adjust target min based on weight
-        // Example: Increase target range for higher weight individuals
+
         targetMin += weight * 0.1f;
 
         // Adjust target min based on diabetes type
-        // Example: Different target ranges for different types of diabetes
+
         if (diabetesType.equals("Type 1")) {
-            // Example: Lower target range for type 1 diabetes
+
             targetMin -= 0.5f;
         } else if (diabetesType.equals("Type 2")) {
-            // Example: Higher target range for type 2 diabetes
+
             targetMin += 0.5f;
         }
 
-        // Adjust target min based on average glucose reading
-        // Example: Increase target range if average glucose is high
+
         if (averageGlucose > 7.0f) {
             targetMin += 1.0f;
         }
@@ -620,26 +618,26 @@ public class HomeFragment extends Fragment {
     }
 
     // Function to calculate the maximum target range based on age, weight, diabetes type, and average glucose reading
-    // Function to calculate the maximum target range based on age, weight, diabetes type, and average glucose reading
+
     private float calculateTargetMax(int age, float weight, String diabetesType, float averageGlucose) {
-        // Example calculation:
+
         float targetMax = 0.0f;
 
-        // Adjust target max based on age
+
         if (age < 30) {
-            // Example: Lower target range for younger individuals
+
             targetMax = 8.0f;
         } else {
-            // Example: Higher target range for older individuals
+
             targetMax = 9.0f;
         }
 
         // Adjust target max based on weight
-        // Example: Increase target range for higher weight individuals
+
         targetMax += weight * 0.1f;
 
         // Adjust target max based on diabetes type
-        // Example: Different target ranges for different types of diabetes
+
         if (diabetesType.equals("Type 1")) {
             // Example: Lower target range for type 1 diabetes
             targetMax -= 0.5f;
@@ -649,7 +647,7 @@ public class HomeFragment extends Fragment {
         }
 
         // Adjust target max based on average glucose reading
-        // Example: Increase target range if average glucose is high
+
         if (averageGlucose > 7.0f) {
             targetMax += 1.0f;
         }
@@ -790,11 +788,11 @@ public class HomeFragment extends Fragment {
     private void retrieveSugarIntakeData() {
         // Calculate the time interval within the method
 
-        // You can modify interval here based on your requirements
+
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
-            // User not logged in, handle accordingly
+
             return;
         }
 

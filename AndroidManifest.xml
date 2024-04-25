@@ -9,6 +9,11 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+
+
 
 
 
@@ -25,6 +30,19 @@
         android:enableOnBackInvokedCallback="true"
 
         tools:targetApi="31">
+
+        <receiver android:name=".NotificationReceiver" />
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -88,6 +106,29 @@
             android:exported="true">
             <!-- Add any intent filters or other attributes specific to Register_Activity here -->
         </activity>
+
+
+        <activity
+            android:name=".ViewAllGlucoseActivity"
+            android:exported="true">
+            <!-- Add any intent filters or other attributes specific to Register_Activity here -->
+        </activity>
+
+        <activity
+            android:name=".BolusAdvisorActivity"
+            android:exported="true">
+            <!-- Add any intent filters or other attributes specific to Register_Activity here -->
+        </activity>
+
+        <activity
+            android:name=".EditGlucoseActivity"
+            android:exported="true">
+            <!-- Add any intent filters or other attributes specific to Register_Activity here -->
+        </activity>
+
     </application>
+
+
+
 
 </manifest>

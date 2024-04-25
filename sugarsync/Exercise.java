@@ -11,14 +11,14 @@ public class Exercise {
     private String exerciseType;
     private double exerciseTime;
 
-    // Default constructor (required for Firebase)
+
     public Exercise() {
         //this.id = UUID.randomUUID().toString();
     }
 
-    // Constructor to initialize fields
+
     public Exercise(String date, String exerciseType, double exerciseTime) {
-        // Only generate a new ID if it's not set
+
         if (TextUtils.isEmpty(id)) {
             this.id = UUID.randomUUID().toString();
         }

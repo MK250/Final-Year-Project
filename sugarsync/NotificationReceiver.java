@@ -33,7 +33,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        // Check if the current time is 1 PM
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         if (calendar.get(Calendar.HOUR_OF_DAY) == 13 && calendar.get(Calendar.MINUTE) == 0) {
@@ -44,17 +44,17 @@ public class NotificationReceiver extends BroadcastReceiver {
 
 
     private void sendNotification(Context context) {
-        // Create notification channel (required for Android Oreo and above)
+
         createNotificationChannel(context);
 
-        // Build notification
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "channel_id")
                 .setSmallIcon(R.drawable.baseline_food_bank_24)
                 .setContentTitle("Don't forget to log your diet!")
                 .setContentText("It's 7 PM. Remember to log your diet for today.")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-        // Show notification
+
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1, builder.build());
     }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "772436347778",
+    "project_id": "sugarsync-16f81",
+    "storage_bucket": "sugarsync-16f81.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:772436347778:android:dbd99ee53c979bc88e1d9b",
+        "android_client_info": {
+          "package_name": "com.example.sugarsync"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD44iZ0j-NHNNErFaWJ3_1NagRTkGN2L6E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

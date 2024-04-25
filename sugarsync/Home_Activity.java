@@ -53,7 +53,7 @@ public class Home_Activity extends AppCompatActivity {
             Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 
             if (item.getItemId() == R.id.navigation_home) {
-                // If the selected item is "Home," always replace with HomeFragment
+
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new HomeFragment())
                         .commit();

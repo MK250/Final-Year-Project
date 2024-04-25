@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="light_purple">#B398E4</color>
+    <color name="turquoise">#40E0D0</color>
+    <color name="customActionBarColor">#00BCD4</color>
+
+
+
+</resources>
+
+

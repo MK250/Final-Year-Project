@@ -19,7 +19,7 @@ public class Diet {
     private String lunch;
     private String dinner;
 
-    // Default constructor required for Firebase
+
     public Diet() {
         this.id = UUID.randomUUID().toString();
     }

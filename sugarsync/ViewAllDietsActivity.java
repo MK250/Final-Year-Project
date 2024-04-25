@@ -204,7 +204,7 @@ public class ViewAllDietsActivity extends AppCompatActivity {
         // Get user ID from Firebase authentication
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
-            // User not logged in, handle accordingly
+
             return;
         }
 

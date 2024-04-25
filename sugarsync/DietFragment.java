@@ -82,7 +82,7 @@ public class DietFragment extends Fragment {
     private EdamamApiService edamamApiService;
 
     public DietFragment() {
-        // Required empty public constructor
+
     }
 
     @Override
@@ -150,7 +150,7 @@ public class DietFragment extends Fragment {
     private void checkDietForPast24Hours() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
-            // User not logged in, handle accordingly
+
             return;
         }
 
@@ -275,7 +275,7 @@ public class DietFragment extends Fragment {
 
 
 
-            // Add other nutrients as needed
+
         }
 
         // Set the nutritional information in the AlertDialog
@@ -288,7 +288,7 @@ public class DietFragment extends Fragment {
         builder.create().show();
     }
 
-    // Helper method to get nutrient details as a formatted string
+
 
     private String getNutrientDetails(NutritionResponse.Nutrient nutrient) {
         if (nutrient != null) {
@@ -331,7 +331,7 @@ public class DietFragment extends Fragment {
     }
 
 
-    // ...
+
 
     private void saveDietData() {
         // Get user ID from Firebase authentication
