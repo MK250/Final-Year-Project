@@ -2,17 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigation_home"
+        android:icon="@drawable/baseline_home_24"
         android:title="Home" />
     <item
         android:id="@+id/navigation_glucose"
+        android:icon="@drawable/baseline_fingerprint_24"
         android:title="Glucose" />
     <item
         android:id="@+id/navigation_diet"
+        android:icon="@drawable/baseline_food_bank_24"
         android:title="Diet" />
     <item
         android:id="@+id/navigation_exercise"
+        android:icon="@drawable/baseline_directions_run_24"
         android:title="Exercise" />
     <item
         android:id="@+id/navigation_profile"
+        android:icon="@drawable/baseline_person_24"
         android:title="Profile" />
 </menu>
